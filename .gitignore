@@ -3,6 +3,9 @@
 
 Servers/
 
+### Properties ###
+*.properties
+
 ### Eclipse ###
 .metadata
 bin/

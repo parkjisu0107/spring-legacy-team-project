@@ -44,7 +44,7 @@
 		// 년, 월에 따라 일 범위 변경 이벤트
 		$month.onchange = function(e){
 			console.log(e.target.options[$month.selectedIndex].value);
-			const selectedYear = e.target.options[$year.selectedIndex].value;
+			const selectedYear = $year.options[$year.selectedIndex].value;
 			const selectedMonth = e.target.options[$month.selectedIndex].value;
 			const endDate = new Date(selectedYear, selectedMonth, 0).getDate();
 			setOptions($day, 1, endDate);
@@ -65,8 +65,10 @@
 			const month = $month.options[$month.selectedIndex].value;
 			const day = $day.options[$day.selectedIndex].value;
 
-			if(year<2011){
+			if(year<1990){
 				location.href = '${pageContext.request.contextPath}/retro/' + year + '/' + month + '/' + day;
+			} else if(year<2010){
+				location.href = '${pageContext.request.contextPath}/analog/' + year + '/' + month + '/' + day;
 			} else {
 				location.href = '${pageContext.request.contextPath}/now/' + year + '/' + month + '/' + day;
 			}

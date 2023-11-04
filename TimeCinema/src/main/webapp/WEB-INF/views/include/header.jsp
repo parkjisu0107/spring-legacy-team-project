@@ -9,22 +9,11 @@ pageEncoding="UTF-8"%>
       rel="stylesheet"
       href="${pageContext.request.contextPath}/css/header.css"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap" rel="stylesheet">
     <title>header</title>
-    <script
-      src="https://kit.fontawesome.com/eebff08403.js"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="${pageContext.request.contextPath}/js
-    /header.js"
-      defer
-    ></script>
+
   </head>
   <body>
     <nav class="navbar">
@@ -54,5 +43,21 @@ pageEncoding="UTF-8"%>
         <i class="fa-solid fa-bars" style="color: #9c9c9c"></i>
       </a>
     </nav>
+
+    <script
+      src="https://kit.fontawesome.com/eebff08403.js"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const toggleBtn = document.querySelector('.navbar__toogleBtn');
+      const menu = document.querySelector('.navbar__menu');
+      const icons = document.querySelector('.navbar__icons');
+      // 변수 생성
+
+      toggleBtn.addEventListener('click', () => {
+        menu.classList.toggle('active');
+        icons.classList.toggle('active');
+      });
+    </script>
   </body>
 </html>

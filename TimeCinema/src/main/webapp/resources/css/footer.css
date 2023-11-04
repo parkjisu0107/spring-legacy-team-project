@@ -1,0 +1,21 @@
+/*
+footer css
+*/
+ #fot{ 
+            background-color: #14181c;
+            border: 1px solid white;
+            margin-top: 70px;
+            padding: 30px 0;
+            border-right: 0;
+            border-left: 0;
+            border-bottom: 0;
+
+        } 
+        .info{
+            margin-left: 30%;
+        }
+
+        body{
+          /* background-color: #14181c; */
+        }
+        

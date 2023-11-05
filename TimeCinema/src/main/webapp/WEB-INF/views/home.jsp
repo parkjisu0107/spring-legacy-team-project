@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-pageEncoding="UTF-8"%>
+pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
+
 <html>
   <head>
     <meta
@@ -49,8 +50,8 @@ pageEncoding="UTF-8"%>
     <div class="swiper mySwiper">
       <div class="swiper-wrapper">
         <div
-          class="swiper-slide"
-          data-era="20's"
+          class="swiper-slide a"
+          data-era="20"
         >
           <img
             src="${pageContext.request.contextPath}/img/20's.jpg"
@@ -58,8 +59,8 @@ pageEncoding="UTF-8"%>
           />
         </div>
         <div
-          class="swiper-slide"
-          data-era="10's"
+          class="swiper-slide b"
+          data-era="10"
         >
           <img
             src="${pageContext.request.contextPath}/img/10's.jpg"
@@ -67,8 +68,8 @@ pageEncoding="UTF-8"%>
           />
         </div>
         <div
-          class="swiper-slide"
-          data-era="00's"
+          class="swiper-slide c"
+          data-era="00"
         >
           <img
             src="${pageContext.request.contextPath}/img/00's.jpg"
@@ -76,8 +77,8 @@ pageEncoding="UTF-8"%>
           />
         </div>
         <div
-          class="swiper-slide"
-          data-era="90's"
+          class="swiper-slide d"
+          data-era="90"
         >
           <img
             src="${pageContext.request.contextPath}/img/90's.jpg"
@@ -85,8 +86,8 @@ pageEncoding="UTF-8"%>
           />
         </div>
         <div
-          class="swiper-slide"
-          data-era="80's"
+          class="swiper-slide e"
+          data-era="80"
         >
           <img
             src="${pageContext.request.contextPath}/img/80's.jpg"
@@ -94,8 +95,8 @@ pageEncoding="UTF-8"%>
           />
         </div>
         <div
-          class="swiper-slide"
-          data-era="70's"
+          class="swiper-slide f"
+          data-era="70"
         >
           <img
             src="${pageContext.request.contextPath}/img/70's.jpg"
@@ -106,6 +107,8 @@ pageEncoding="UTF-8"%>
       <div class="swiper-button swiper-button-next"></div>
       <div class="swiper-button swiper-button-prev"></div>
     </div>
+
+    <%@ include file="./include/footer.jsp" %>
 
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -133,15 +136,14 @@ pageEncoding="UTF-8"%>
           prevEl: '.swiper-button-prev',
         },
         loop: true,
-        mousewheel: true,
         allowTouchMove: false,
-        parallax: true,
+        mousewheel: true,
       });
 
       // 선택된 시대 텍스트 넣기
       const $era = document.getElementById('era');
       swiper.on('activeIndexChange', function () {
-        $era.textContent = swiper.slides[swiper.activeIndex].dataset.era;
+        $era.textContent = swiper.slides[swiper.activeIndex].dataset.era + `'s`;
       });
 
       // 선택된 시대로 요청 보내기
@@ -149,7 +151,7 @@ pageEncoding="UTF-8"%>
         const era = swiper.clickedSlide.dataset.era;
         console.log(era);
         if (swiper.clickedIndex !== swiper.activeIndex) return;
-        location.href = '/time/' + era;
+        location.href = '${pageContext.request.contextPath}/time/' + era;
       });
     </script>
   </body>

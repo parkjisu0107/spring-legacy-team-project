@@ -15,7 +15,7 @@ pageEncoding="UTF-8"%>
     <title>Document</title>
 </head>
 <body>
-    <footer id="fot">
+    <footer class="footer">
 
         <div class="info" style="color: white;">
           <span>TimeCinema |</span>

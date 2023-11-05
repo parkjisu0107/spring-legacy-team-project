@@ -1,6 +1,11 @@
-body {
+* {
+  padding: 0;
   margin: 0;
+  box-sizing: border-box;
+}
+body {
   font-family: 'Nunito', sans-serif;
+  background-color: #14181c;
 }
 a {
   text-decoration: none; /*밑줄 없애기*/
@@ -10,7 +15,6 @@ a {
   display: flex; /*가로로 배치*/
   justify-content: space-between; /*(가로축 - 중심축) 요소들 사이에 동일한 간격을 둠*/
   align-items: center; /*(세로축 - 교차축) 컨테이너의 세로 축의 중앙으로 정렬*/
-  background-color: #14181c;
   padding: 8px 12px;
 }
 

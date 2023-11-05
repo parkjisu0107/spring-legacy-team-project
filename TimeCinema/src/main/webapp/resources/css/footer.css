@@ -1,21 +1,13 @@
-/*
-footer css
-*/
- #fot{ 
-            background-color: #14181c;
-            border: 1px solid white;
-            margin-top: 70px;
-            padding: 30px 0;
-            border-right: 0;
-            border-left: 0;
-            border-bottom: 0;
-
-        } 
-        .info{
-            margin-left: 30%;
-        }
-
-        body{
-          /* background-color: #14181c; */
-        }
-        
+.footer {
+  width: 80%;
+  border-top: 1px solid #eae6e6;
+  margin-top: 50px;
+  padding-top: 24px;
+  padding-bottom: 50px;
+}
+.info {
+  margin-left: 16%;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.8rem;
+  color: #eae6e6;
+}

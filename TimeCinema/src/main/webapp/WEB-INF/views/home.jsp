@@ -3,10 +3,7 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
 
 <html>
   <head>
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
     <!-- Link Swiper's CSS -->
     <link
@@ -15,15 +12,8 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
     />
 
     <!-- Link font -->
-    <link
-      rel="preconnect"
-      href="https://fonts.googleapis.com"
-    />
-    <link
-      rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin
-    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@1,600&family=Sacramento&display=swap"
       rel="stylesheet"
@@ -49,59 +39,23 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
     <!-- Swiper -->
     <div class="swiper mySwiper">
       <div class="swiper-wrapper">
-        <div
-          class="swiper-slide a"
-          data-era="20"
-        >
-          <img
-            src="${pageContext.request.contextPath}/img/20's.jpg"
-            alt=""
-          />
+        <div class="swiper-slide a" data-era="20">
+          <img src="${pageContext.request.contextPath}/img/20's.jpg" alt="" />
         </div>
-        <div
-          class="swiper-slide b"
-          data-era="10"
-        >
-          <img
-            src="${pageContext.request.contextPath}/img/10's.jpg"
-            alt=""
-          />
+        <div class="swiper-slide b" data-era="10">
+          <img src="${pageContext.request.contextPath}/img/10's.jpg" alt="" />
         </div>
-        <div
-          class="swiper-slide c"
-          data-era="00"
-        >
-          <img
-            src="${pageContext.request.contextPath}/img/00's.jpg"
-            alt=""
-          />
+        <div class="swiper-slide c" data-era="00">
+          <img src="${pageContext.request.contextPath}/img/00's.jpg" alt="" />
         </div>
-        <div
-          class="swiper-slide d"
-          data-era="90"
-        >
-          <img
-            src="${pageContext.request.contextPath}/img/90's.jpg"
-            alt=""
-          />
+        <div class="swiper-slide d" data-era="90">
+          <img src="${pageContext.request.contextPath}/img/90's.jpg" alt="" />
         </div>
-        <div
-          class="swiper-slide e"
-          data-era="80"
-        >
-          <img
-            src="${pageContext.request.contextPath}/img/80's.jpg"
-            alt=""
-          />
+        <div class="swiper-slide e" data-era="80">
+          <img src="${pageContext.request.contextPath}/img/80's.jpg" alt="" />
         </div>
-        <div
-          class="swiper-slide f"
-          data-era="70"
-        >
-          <img
-            src="${pageContext.request.contextPath}/img/70's.jpg"
-            alt=""
-          />
+        <div class="swiper-slide f" data-era="70">
+          <img src="${pageContext.request.contextPath}/img/70's.jpg" alt="" />
         </div>
       </div>
       <div class="swiper-button swiper-button-next"></div>

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -57,8 +58,13 @@ pageEncoding="UTF-8"%>
         </a>
       </div>
       <ul class="navbar__login">
-        <li><a href="#">SIGN IN</a></li>
-        <li><a href="#">SIGN UP</a></li>
+      	<c:if test="${login == null}">
+        	<li><a href="${pageContext.request.contextPath}/user/userIn">SIGN IN</a></li>
+        	<li><a href="${pageContext.request.contextPath}/user/userUp">SIGN UP</a></li>
+        </c:if>
+        <c:if test="login != null">
+        	<li><a href="${pageContext.request.contextPath}/user/userOuT">SIGN OUT</a></li>
+        </c:if>
       </ul>
       <a
         href="#"

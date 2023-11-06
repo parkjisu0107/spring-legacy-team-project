@@ -1,0 +1,225 @@
+body {
+  background-color: black;
+  color: white;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.image-box {
+  height: 200px;
+  overflow: hidden;
+  margin-bottom: 70px;
+}
+
+.image-thumbnail {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.detailposter,
+.detailposter img {
+  height: 300px;
+  width: 250px;
+  margin-right: 100px;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail table {
+  margin-bottom: 50px;
+}
+
+.detail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 100px;
+}
+.review {
+  width: 640px;
+}
+
+.details {
+  width: 200px;
+}
+
+.title1 {
+  color: white;
+  font-size: 44px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.title2 {
+  color: #c7c1ba;
+  font-size: 23px;
+  font-weight: 300;
+  margin-bottom: 15px;
+}
+
+.title3 {
+  color: #c7c1ba;
+  font-size: 15px;
+}
+
+.table {
+  width: 640px;
+}
+
+textarea {
+  width: 640px;
+  background-color: black;
+  color: white;
+  margin-bottom: 30px;
+}
+
+main {
+  margin-bottom: 100px;
+}
+
+.col-xs-12 {
+  display: block;
+  /* align-items: center;
+            justify-content: center; */
+  padding-left: 400px;
+}
+
+/* ----------------------줄거리 더보기 줄이기--------------------------- */
+.text-wrapper {
+  /* 임의의 넓이 설정 (200px이 넘어갈 경우 텍스트 줄바꿈) */
+  width: 400px;
+}
+
+.text {
+  /* 요소의 내용이 영역을 벗어날 경우 그 부분은 숨겨지게 처리 */
+  overflow: hidden;
+  /* 요소의 표시 방법을 -webkit-box로 표시 */
+  display: -webkit-box;
+  /* webkit-box로 표시된 자식 요소들의 배치 방법 결정 (여기서는 수직) */
+  -webkit-box-orient: vertical;
+  /* 요소 내 텍스트를 지정한 라인수까지만 표시 */
+  -webkit-line-clamp: 2;
+  /* 텍스트 양쪽정렬 */
+  text-align: justify;
+}
+
+.more-text {
+  /* 글씨 크기,색상 지정 */
+  font-size: 16px;
+  color: red;
+
+  /* 마우스 포인트가 올라갔을 때 커서 모양을 포인터로 변경 */
+  cursor: pointer;
+}
+
+.less-text {
+  /* 글씨 크기,색상 지정 */
+  font-size: 16px;
+  color: red;
+  /* 마우스 포인트가 올라갔을 때 커서 모양을 포인터로 변경 */
+  cursor: pointer;
+  /* 줄이기 버튼 (처음에는 안보이게) */
+  display: none;
+}
+/* --------------------줄거리 더보기 줄이기 끝-------------------- */
+
+/* --------------------트레일러 이미지 slider-------------------- */
+.slider__wrap {
+  width: 100%;
+  /* height: 100vh; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 이미지 보이는 부분 */
+.slider__img {
+  position: relative;
+  width: 600px;
+  height: 400px;
+  overflow: hidden;
+}
+
+/* 이미지 감싸고 있는 부모 : 움직이는 부분 */
+.slider__inner {
+  display: flex;
+  flex-wrap: wrap;
+  /* 총 이미지 6개 */
+  width: 3600px;
+  height: 400px;
+}
+
+/* 개별적인 이미지 */
+.slider {
+  position: relative;
+  width: 600px;
+  height: 400px;
+}
+
+.slider img {
+  width: 100%;
+}
+
+.slider::before {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  padding: 5px 10px;
+}
+
+.slider:nth-child(1)::before {
+  content: '이미지1';
+}
+
+.slider:nth-child(2)::before {
+  content: '이미지2';
+}
+
+.slider:nth-child(3)::before {
+  content: '이미지3';
+}
+
+.slider:nth-child(4)::before {
+  content: '이미지4';
+}
+
+.slider:nth-child(5)::before {
+  content: '이미지5';
+}
+
+.slider:nth-child(6)::before {
+  content: '이미지1';
+}
+
+@media (max-width: 800px) {
+  .slider__img {
+    width: 400px;
+    height: 300px;
+  }
+}
+/* --------------------트레일러 이미지 slider 끝-------------------- */
+
+.container {
+  justify-content: center;
+  width: 100%;
+}
+
+#fot {
+  border: 1px solid white;
+  margin-top: 70px;
+  padding: 30px 0;
+  border-right: 0;
+  border-left: 0;
+  border-bottom: 0;
+}
+.info {
+  margin-left: 30%;
+}
+
+.still,
+.review {
+  text-align: center;
+  margin-bottom: 20px;
+}

@@ -1,0 +1,49 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+body {
+  height: 100%;
+  background-color: #14181c;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.title-box {
+  border: 1px solid #fff;
+  color: #fff;
+  height: 10rem;
+}
+h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 4rem;
+}
+#title-sub {
+  font-family: 'Nunito', sans-serif;
+}
+.swiper {
+  width: 80%;
+  padding-top: 50px;
+  height: 100%;
+}
+.swiper-slide {
+  background-position: center;
+  background-size: cover;
+  width: 160px;
+  color: #fff;
+}
+.box-title {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.swiper-slide img {
+  display: block;
+  width: 100%;
+}
+.swiper-button {
+  --swiper-navigation-size: 20px;
+  --swiper-navigation-top-offset: 3%;
+  --swiper-navigation-sides-offset: 26vw;
+  --swiper-navigation-color: #fff;
+}

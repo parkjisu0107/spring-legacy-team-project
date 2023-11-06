@@ -105,7 +105,7 @@ pageEncoding="UTF-8"%> <%@ include file="./include/header.jsp" %>
         const era = swiper.clickedSlide.dataset.era;
         console.log(era);
         if (swiper.clickedIndex !== swiper.activeIndex) return;
-        location.href = '${pageContext.request.contextPath}/time/' + era;
+        location.href = '${pageContext.request.contextPath}/movie/' + era;
       });
     </script>
   </body>

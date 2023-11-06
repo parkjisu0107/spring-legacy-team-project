@@ -38,12 +38,12 @@ pageEncoding="UTF-8"%>
         <a href="${pageContext.request.contextPath}/">TimeCinema</a>
       </div>
       <ul class="navbar__menu">
-        <li><a href="${pageContext.request.contextPath}/time/70">70s</a></li>
-        <li><a href="${pageContext.request.contextPath}/time/80">80s</a></li>
-        <li><a href="${pageContext.request.contextPath}/time/90">90s</a></li>
-        <li><a href="${pageContext.request.contextPath}/time/00">00s</a></li>
-        <li><a href="${pageContext.request.contextPath}/time/10">10s</a></li>
-        <li><a href="${pageContext.request.contextPath}/time/20">20s</a></li>
+        <li><a href="${pageContext.request.contextPath}/movie/70">70s</a></li>
+        <li><a href="${pageContext.request.contextPath}/movie/80">80s</a></li>
+        <li><a href="${pageContext.request.contextPath}/movie/90">90s</a></li>
+        <li><a href="${pageContext.request.contextPath}/movie/00">00s</a></li>
+        <li><a href="${pageContext.request.contextPath}/movie/10">10s</a></li>
+        <li><a href="${pageContext.request.contextPath}/movie/20">20s</a></li>
       </ul>
       <div class="box">
         <input

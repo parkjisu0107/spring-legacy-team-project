@@ -1,5 +1,7 @@
 package com.spring.timecinema.movie;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +19,19 @@ public class MovieController {
 
 	private final MovieService service;
 	
-	// 시대 페이지 열기
+	// time 페이지 열기
 	@GetMapping("/{era}")
-	public String home(@PathVariable String era,Model model) {
-		log.info("era: {}", era);
-		
+	public String time(@PathVariable String era,Model model) {
+		model.addAttribute("box", service.getBoxOfficeList(era));
 		return "movie/time";
 	}
+	
+	// 포스터 불러오기
+	@GetMapping("/{openDt}/{title}")
+	public void poster(@PathVariable String openDt, @PathVariable String title) {
+
+		service.getPoster(openDt, title);
+	}
+	
+	
 }

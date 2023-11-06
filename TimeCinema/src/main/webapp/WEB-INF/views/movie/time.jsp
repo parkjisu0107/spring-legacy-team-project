@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <%@ include file="../include/header.jsp"  %>
 <html>
   <head>
@@ -45,96 +47,13 @@ pageEncoding="UTF-8"%>
       <div class="swiper-button swiper-button-prev"></div>
 
       <div class="swiper-wrapper">
-        <div
-          class="swiper-slide"
-          data-era="20's"
-        >
-          <img
-            src="${pageContext.request.contextPath}/img/20's.jpg"
-            alt=""
-          />
-          <span class="box-rank">
-            1
-          </span>
-          <span class="box-title">
-            제목
-          </span>
-        </div>
-        <div
-          class="swiper-slide"
-          data-era="10's"
-        >
-          <img
-            src="${pageContext.request.contextPath}/img/10's.jpg"
-            alt=""
-          />
-          <span class="box-rank">
-            1
-          </span>
-          <span class="box-title">
-            제목
-          </span>
-        </div>
-        <div
-          class="swiper-slide"
-          data-era="00's"
-        >
-          <img
-            src="${pageContext.request.contextPath}/img/00's.jpg"
-            alt=""
-          />
-          <span class="box-rank">
-            1
-          </span>
-          <span class="box-title">
-            제목
-          </span>
-        </div>
-        <div
-          class="swiper-slide"
-          data-era="90's"
-        >
-          <img
-            src="${pageContext.request.contextPath}/img/90's.jpg"
-            alt=""
-          />
-          <span class="box-rank">
-            1
-          </span>
-          <span class="box-title">
-            제목
-          </span>
-        </div>
-        <div
-          class="swiper-slide"
-          data-era="80's"
-        >
-          <img
-            src="${pageContext.request.contextPath}/img/80's.jpg"
-            alt=""
-          />
-          <span class="box-rank">
-            1
-          </span>
-          <span class="box-title">
-            제목
-          </span>
-        </div>
-        <div
-          class="swiper-slide"
-          data-era="70's"
-        >
-          <img
-            src="${pageContext.request.contextPath}/img/70's.jpg"
-            alt=""
-          />
-          <span class="box-rank">
-            1
-          </span>
-          <span class="box-title">
-            제목
-          </span>
-        </div>
+        <c:forEach var="b" items="${box}">
+            <div class="swiper-slide">
+              <img src="${pageContext.request.contextPath}/movie/${b.openDt}/${b.title}" alt=""/>
+              <span class="box-rank">${b.rank}</span>
+              <span class="box-title">${b.title}</span>
+            </div>
+          </c:forEach>
       </div>
     </div>
 
@@ -247,30 +166,16 @@ pageEncoding="UTF-8"%>
       const swiper = new Swiper('.mySwiper', {
         effect: 'slide',
         spaceBetween: '15px',
-        slidesPerView: 'auto',
+        slidesPerView: 5,
         slidesPerGroup: 5,
         navigation: {
           nextEl: '.swiper-button-next',
           prevEl: '.swiper-button-prev',
         },
-        loop: true,
         allowTouchMove: false,
-        parallax: true,
       });
 
-      // 선택된 시대 텍스트 넣기
-      const $era = document.getElementById('era');
-      swiper.on('activeIndexChange', function () {
-        $era.textContent = swiper.slides[swiper.activeIndex].dataset.era;
-      });
 
-      // 선택된 시대로 요청 보내기
-      swiper.on('click', function () {
-        const era = swiper.clickedSlide.dataset.era;
-        console.log(era);
-        if (swiper.clickedIndex !== swiper.activeIndex) return;
-        location.href = '/time/' + era;
-      });
     </script>
   </body>
 </html>

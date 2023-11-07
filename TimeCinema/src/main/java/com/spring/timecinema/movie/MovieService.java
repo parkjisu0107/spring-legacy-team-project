@@ -33,6 +33,8 @@ public class MovieService {
 	private String reqUrl;
 
 	public List<BoxOffice> getBoxOfficeList(String era) {
+		
+		// 조회 시작 년도 설정
 		int yearFrom = 0;
 		
 		if(era.equals("70")) yearFrom=1970;
@@ -42,7 +44,17 @@ public class MovieService {
 		if(era.equals("10")) yearFrom=2010;
 		if(era.equals("20")) yearFrom=2020;
 		
-		return mapper.getBoxOfficeList(yearFrom);
+		List<BoxOffice> list = mapper.getBoxOfficeList(yearFrom);
+		
+		// 포스터 존재 여부 확인하고 불러오기
+//		for(BoxOffice b : list) {
+//			if(b.getPoster()==null) {
+//				
+//			}
+//		}
+		
+		return list;
+		
 		
 			
 	}
@@ -54,16 +66,18 @@ public class MovieService {
 	    //response 안에서 body 키에 해당하는 JSON 데이터를 가져옵니다.
 	    JSONArray resultArray = (JSONArray) data.get("Result");
 	    JSONObject result = (JSONObject) resultArray.get(0);
+	    String posters = (String) ((JSONObject) result).get("posters");
 		
-	    String posters = "";
+//	    for(Object result : resultArray) {
+//	    	String posters = (String) ((JSONObject) result).get("posters");
+//	    	if(posters != null) {
+//	    		
+//	    	}
+//	    }
 	    
 	    
-	    if((String) result.get("posters") != null) {
-	    	posters = (String) result.get("posters");
-	    } else {
-	    	result = (JSONObject) resultArray.get(1);
-	    	posters = (String) result.get("posters");
-	    }
+
+	   
 	    
 	    
 	    log.info("poster uri {}: {}",title, posters);
@@ -77,9 +91,7 @@ public class MovieService {
 		
 		UriComponents builder = UriComponentsBuilder.fromHttpUrl(reqUrl)
 				.queryParam("ServiceKey", serviceKey)
-//				.queryParam("listCount", "3")
-//				.queryParam("releaseDts", openDt)
-//				.queryParam("releaseDte", openDt)
+				.queryParam("releaseDts", openDt)
 				.queryParam("title", title)
 				.build();
 		

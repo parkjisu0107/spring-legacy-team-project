@@ -17,4 +17,5 @@ public class BoxOffice {
 	int rank;
 	String title;
 	String openDt;
+	String poster;
 }

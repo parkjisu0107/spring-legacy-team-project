@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.spring.timecinema.user.mapper.IUserMapper">
+
+	<resultMap type="user" id="userMap">
+        <result property="userName" column="user_name" />
+        <result property="userEmail" column="user_email" />
+        <collection property="userBoardList" resultMap="list" />
+    </resultMap>
+
+    <insert id="join">
+        INSERT INTO users
+        (user_id, user_pw, user_name, user_email)
+        VALUES(#{userId}, #{userPw}, #{userName}, #{userEmail})
+    </insert>
+
+    <select id="idCheck" resultType="int">
+        SELECT COUNT(*)
+        FROM users
+        WHERE user_id = #{id}
+    </select>
+
+    <select id="login" resultType="string">
+        SELECT user_pw FROM users
+        WHERE user_id = #{id}
+    </select>
+
+<!--     <select id="getInfo" resultMap="userMap">
+        SELECT 
+        user_name, user_email1,
+        f.bno,
+        f.title,
+        f.reg_date
+        FROM users u
+        LEFT JOIN freeboard f
+        ON u.user_id = f.writer
+        WHERE user_id = #{id}
+        ORDER BY f.bno DESC
+    </select> -->
+    
+    <update id="updateUser">
+        UPDATE users
+        SET user_pw = #{userPw}, user_name = #{userName},
+        user_email = #{userEmail}
+    </update>
+
+</mapper>

@@ -11,7 +11,11 @@
 	(
 	    SELECT ROWNUM AS rank, tbl.*
 	    FROM(
-	        SELECT REPLACE(title, ' ', '') AS title, REPLACE(open_dt, '-', '') AS open_dt
+	        SELECT 
+	        	REPLACE(title, ' ', '') AS title, 
+	        	REPLACE(open_dt, '-', '') AS open_dt,
+	        	poster,
+	        	row_num
 	        FROM box_office
 	        WHERE SUBSTR(open_dt, 1, 4) >= #{yearFrom}
 	        AND SUBSTR(open_dt, 1, 4) < #{yearFrom} + 10
@@ -22,5 +26,10 @@
 	]]>
 </select>
 
+<update id="setPoster">
+	UPDATE box_office
+	SET poster=#{poster}
+	WHERE row_num=#{rowNum}
+</update>
 
 </mapper>

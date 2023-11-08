@@ -2,6 +2,7 @@ package com.spring.timecinema.movie;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -47,11 +48,14 @@ public class MovieService {
 		List<BoxOffice> list = mapper.getBoxOfficeList(yearFrom);
 		
 		// 포스터 존재 여부 확인하고 불러오기
-//		for(BoxOffice b : list) {
-//			if(b.getPoster()==null) {
-//				
-//			}
-//		}
+		for(BoxOffice b : list) {
+			if(b.getPoster()==null) {
+				String poster = getPoster(b.getOpenDt(), b.getTitle());
+				int rowNum = b.getRowNum();
+				mapper.setPoster(rowNum, poster);
+				b.setPoster(poster);
+			}
+		}
 		
 		return list;
 		
@@ -59,31 +63,20 @@ public class MovieService {
 			
 	}
 
-	public void getPoster(String openDt, String title) {
-
+	public String getPoster(String openDt, String title) {
+		
 		JSONObject data = getMovieInfo(openDt, title);
 		
-	    //response 안에서 body 키에 해당하는 JSON 데이터를 가져옵니다.
+	    // data에서 posters 꺼내기
 	    JSONArray resultArray = (JSONArray) data.get("Result");
 	    JSONObject result = (JSONObject) resultArray.get(0);
 	    String posters = (String) ((JSONObject) result).get("posters");
-		
-//	    for(Object result : resultArray) {
-//	    	String posters = (String) ((JSONObject) result).get("posters");
-//	    	if(posters != null) {
-//	    		
-//	    	}
-//	    }
 	    
+	    // posters의 url 중 첫번째 url을 자르기
+	    String poster = posters.split("\\|")[0];
 	    
+	    return poster;
 
-	   
-	    
-	    
-	    log.info("poster uri {}: {}",title, posters);
-
-
-		
 	}
 	
 	// 영화 정보 JSON data 불러오기
@@ -92,6 +85,7 @@ public class MovieService {
 		UriComponents builder = UriComponentsBuilder.fromHttpUrl(reqUrl)
 				.queryParam("ServiceKey", serviceKey)
 				.queryParam("releaseDts", openDt)
+				.queryParam("releaseDte", openDt)
 				.queryParam("title", title)
 				.build();
 		
@@ -109,7 +103,20 @@ public class MovieService {
 			String responseData = responseEntity.getBody();
 		    JSONParser parser = new JSONParser();
 		    JSONObject jsonObject = (JSONObject) parser.parse(responseData);
-
+		    
+		    // 검색 결과 존재 확인 및 재검색
+		    if(jsonObject.get("TotalCount").toString().equals("0")) {
+		    	builder = UriComponentsBuilder.fromHttpUrl(reqUrl)
+						.queryParam("ServiceKey", serviceKey)
+						.queryParam("title", title)
+						.build();
+		    	responseEntity 
+				= template.exchange(builder.toUriString(), HttpMethod.GET, requEntity, String.class);
+		    	responseData = responseEntity.getBody();
+		    	parser = new JSONParser();
+		    	jsonObject = (JSONObject) parser.parse(responseData);
+		    }
+		    
 		    //"data" 라는 이름의 키에 해당하는 JSON 데이터를 가져옵니다.
 		    JSONArray dataArray = (JSONArray) jsonObject.get("Data");
 		    data = (JSONObject) dataArray.get(0);

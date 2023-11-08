@@ -25,13 +25,7 @@ public class MovieController {
 		model.addAttribute("box", service.getBoxOfficeList(era));
 		return "movie/time";
 	}
-	
-	// 포스터 불러오기
-	@GetMapping("/{openDt}/{title}")
-	public void poster(@PathVariable String openDt, @PathVariable String title) {
 
-		service.getPoster(openDt, title);
-	}
 	
 	
 }

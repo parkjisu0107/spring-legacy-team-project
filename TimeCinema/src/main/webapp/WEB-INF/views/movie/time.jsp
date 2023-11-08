@@ -47,13 +47,13 @@ pageEncoding="UTF-8"%>
       <div class="swiper-button swiper-button-prev"></div>
 
       <div class="swiper-wrapper">
-        <c:forEach var="b" items="${box}">
+         <c:forEach var="b" items="${box}">
             <div class="swiper-slide">
-              <img src="${pageContext.request.contextPath}/movie/${b.openDt}/${b.title}" alt=""/>
-              <span class="box-rank">${b.rank}</span>
-              <span class="box-title">${b.title}</span>
+				<img src="${b.poster}" alt=""/>
+	              <span class="box-rank">${b.rank}</span>
+	              <span class="box-title">${b.title}</span>
             </div>
-          </c:forEach>
+          </c:forEach> 
       </div>
     </div>
 

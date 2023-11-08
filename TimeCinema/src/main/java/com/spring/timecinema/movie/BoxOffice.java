@@ -15,6 +15,7 @@ import lombok.ToString;
 @Builder
 public class BoxOffice {
 	int rank;
+	int rowNum;
 	String title;
 	String openDt;
 	String poster;

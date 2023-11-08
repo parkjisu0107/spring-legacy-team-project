@@ -25,6 +25,10 @@
 	</typeAliases>
  -->
 
+	<typeAliases>
+		<typeAlias type="com.spring.timecinema.user.entity.User" alias="user"/>
+	</typeAliases>
+
 </configuration>    
 
 

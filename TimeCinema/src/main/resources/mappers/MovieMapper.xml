@@ -5,4 +5,31 @@
 <mapper namespace="com.spring.timecinema.movie.IMovieMapper">
 
 
+<select id="getBoxOfficeList" resultType="box">
+	<![CDATA[
+	SELECT * FROM
+	(
+	    SELECT ROWNUM AS rank, tbl.*
+	    FROM(
+	        SELECT 
+	        	REPLACE(title, ' ', '') AS title, 
+	        	REPLACE(open_dt, '-', '') AS open_dt,
+	        	poster,
+	        	row_num
+	        FROM box_office
+	        WHERE SUBSTR(open_dt, 1, 4) >= #{yearFrom}
+	        AND SUBSTR(open_dt, 1, 4) < #{yearFrom} + 10
+	        ORDER BY viewer DESC
+	    )tbl
+	)
+	WHERE rank>0 AND rank<=20
+	]]>
+</select>
+
+<update id="setPoster">
+	UPDATE box_office
+	SET poster=#{poster}
+	WHERE row_num=#{rowNum}
+</update>
+
 </mapper>

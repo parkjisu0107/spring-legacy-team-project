@@ -19,13 +19,20 @@ public class MovieController {
 
 	private final MovieService service;
 	
-	// time 페이지 열기
+	// movie time 페이지 열기
 	@GetMapping("/{era}")
 	public String time(@PathVariable String era,Model model) {
 		model.addAttribute("box", service.getBoxOfficeList(era));
 		return "movie/time";
 	}
 
+	// movie detail 페이지 열기
+	@GetMapping("/detail/{rowNum}")
+	public String movieDetail(@PathVariable int rowNum) {
+		log.info("detail요청 들어옴 rowNum: {}", rowNum);
+//		service.getMovieDetail()
+		return "movie/detail";
+	}
 	
 	
 }

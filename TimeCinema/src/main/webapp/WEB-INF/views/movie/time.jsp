@@ -45,13 +45,14 @@ pageEncoding="UTF-8"%>
     <div class="swiper mySwiper">
       <div class="swiper-button swiper-button-next"></div>
       <div class="swiper-button swiper-button-prev"></div>
-
       <div class="swiper-wrapper">
          <c:forEach var="b" items="${box}">
             <div class="swiper-slide">
-				<img src="${b.poster}" alt=""/>
-	              <span class="box-rank">${b.rank}</span>
-	              <span class="box-title">${b.title}</span>
+              <a href="${pageContext.request.contextPath}/movie/detail/${b.rowNum}" class="wrap-poster">
+                <img src="${b.poster}" alt=""/>
+              </a>
+	            <span class="box-rank">${b.rank}</span>
+	            <span class="box-title">${b.title}</span>
             </div>
           </c:forEach> 
       </div>

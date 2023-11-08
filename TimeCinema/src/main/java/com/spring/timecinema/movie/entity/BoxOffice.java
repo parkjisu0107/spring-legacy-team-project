@@ -1,4 +1,4 @@
-package com.spring.timecinema.movie;
+package com.spring.timecinema.movie.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,9 +14,9 @@ import lombok.ToString;
 @AllArgsConstructor
 @Builder
 public class BoxOffice {
-	int rank;
-	int rowNum;
-	String title;
-	String openDt;
-	String poster;
+	private int rank;
+	private int rowNum;
+	private String title;
+	private String openDt;
+	private String poster;
 }

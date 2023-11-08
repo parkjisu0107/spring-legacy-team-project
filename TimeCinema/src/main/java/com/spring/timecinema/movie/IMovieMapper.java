@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.spring.timecinema.movie.entity.BoxOffice;
+
 public interface IMovieMapper {
 
 	List<BoxOffice> getBoxOfficeList(int yearFrom);

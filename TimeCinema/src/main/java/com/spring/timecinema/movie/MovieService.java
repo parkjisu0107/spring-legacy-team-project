@@ -17,6 +17,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.spring.timecinema.movie.entity.BoxOffice;
+import com.spring.timecinema.movie.entity.Era;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,17 +36,7 @@ public class MovieService {
 	@Value("${kmdb.reqUrl}")
 	private String reqUrl;
 
-	public List<BoxOffice> getBoxOfficeList(String era) {
-		
-		// 조회 시작 년도 설정
-		int yearFrom = 0;
-		
-		if(era.equals("70")) yearFrom=1970;
-		if(era.equals("80")) yearFrom=1980;
-		if(era.equals("90")) yearFrom=1990;
-		if(era.equals("00")) yearFrom=2000;
-		if(era.equals("10")) yearFrom=2010;
-		if(era.equals("20")) yearFrom=2020;
+	public List<BoxOffice> getBoxOfficeList(int yearFrom) {
 		
 		List<BoxOffice> list = mapper.getBoxOfficeList(yearFrom);
 		
@@ -89,6 +82,8 @@ public class MovieService {
 				.queryParam("title", title)
 				.build();
 		
+		log.info(builder.toString());
+		
 		HttpHeaders headers = new HttpHeaders();
 		
 		RestTemplate template = new RestTemplate();
@@ -110,6 +105,9 @@ public class MovieService {
 						.queryParam("ServiceKey", serviceKey)
 						.queryParam("title", title)
 						.build();
+		    	
+		    	log.info(builder.toString());
+		    	
 		    	responseEntity 
 				= template.exchange(builder.toUriString(), HttpMethod.GET, requEntity, String.class);
 		    	responseData = responseEntity.getBody();

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.spring.timecinema.movie.entity.Era;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +24,10 @@ public class MovieController {
 	// movie time 페이지 열기
 	@GetMapping("/{era}")
 	public String time(@PathVariable String era,Model model) {
-		model.addAttribute("box", service.getBoxOfficeList(era));
+		Era targetEra = new Era(era);
+		
+		model.addAttribute("box", service.getBoxOfficeList(targetEra.getYearFrom()));
+		model.addAttribute("era", targetEra);
 		return "movie/time";
 	}
 
@@ -30,7 +35,7 @@ public class MovieController {
 	@GetMapping("/detail/{rowNum}")
 	public String movieDetail(@PathVariable int rowNum) {
 		log.info("detail요청 들어옴 rowNum: {}", rowNum);
-//		service.getMovieDetail()
+//		service.getMovieDetail();
 		return "movie/detail";
 	}
 	

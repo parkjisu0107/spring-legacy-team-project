@@ -36,8 +36,8 @@ pageEncoding="UTF-8"%>
 
   <body>
     <div class="title-box">
-      <h2>70's CINEMA</h2>
-      <span id="title-sub">From 1970 to 1979</span>
+      <h2>${era.era}'s CINEMA</h2>
+      <span id="title-sub">From ${era.yearFrom} to ${era.yearTo}</span>
       </div>
     </div>
 

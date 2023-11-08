@@ -1,9 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-pageEncoding="UTF-8"%>
-<!DOCTYPE html>
+pageEncoding="UTF-8"%> <%@ include file="../include/header.jsp" %>
+
 <html>
   <head>
-    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- link file css -->
     <link
       rel="stylesheet"
@@ -17,7 +17,6 @@ pageEncoding="UTF-8"%>
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&display=swap"
       rel="stylesheet"
     />
-
     <title></title>
   </head>
   <body>
@@ -29,8 +28,16 @@ pageEncoding="UTF-8"%>
         name="joinForm"
       >
         <div class="form-group">
+          <input
+            type="text"
+            name="userName"
+            class="form-control"
+            id="userName"
+            placeholder="이름"
+          />
+        </div>
+        <div class="form-group">
           <!--사용자클래스선언-->
-          <label for="id">아이디</label>
           <div class="input-group">
             <!--input2탭의 input-addon을 가져온다 -->
             <input
@@ -38,7 +45,7 @@ pageEncoding="UTF-8"%>
               class="form-control"
               name="userId"
               id="userId"
-              placeholder="아이디를 (영문포함 8~12자 이상)"
+              placeholder="아이디 (영문포함 8~12자 이상)"
             />
             <div class="input-group-addon">
               <button type="button" class="btn btn-primary" id="idCheckBtn">
@@ -51,7 +58,6 @@ pageEncoding="UTF-8"%>
         </div>
         <div class="form-group">
           <!--기본 폼그룹을 가져온다-->
-          <label for="password">비밀번호</label>
           <input
             type="password"
             name="userPw"
@@ -63,7 +69,6 @@ pageEncoding="UTF-8"%>
           <!--자바스크립트에서 추가-->
         </div>
         <div class="form-group">
-          <label for="password-confrim">비밀번호 확인</label>
           <input
             type="password"
             class="form-control"
@@ -73,18 +78,8 @@ pageEncoding="UTF-8"%>
           <span id="msgPw-c"></span>
           <!--자바스크립트에서 추가-->
         </div>
-        <div class="form-group">
-          <label for="name">이름</label>
-          <input
-            type="text"
-            name="userName"
-            class="form-control"
-            id="userName"
-            placeholder="이름을 입력하세요."
-          />
-        </div>
+
         <div class="form-group email-form">
-          <label for="email">이메일</label><br />
           <div class="input-group">
             <input
               type="text"
@@ -116,20 +111,15 @@ pageEncoding="UTF-8"%>
           <button
             type="button"
             id="joinBtn"
-            class="btn btn-lg btn-success btn-block"
+            class="btn btn-lg btn-info btn-block"
           >
-            회원가입
-          </button>
-        </div>
-
-        <div class="form-group">
-          <button type="button" class="btn btn-lg btn-info btn-block">
-            로그인
+            가입하기
           </button>
         </div>
       </form>
     </div>
 
+    <%@ include file="../include/footer.jsp" %>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
       let code = ''; // 이메일 전송 인증번호 저장을 위한 변수.
@@ -260,7 +250,7 @@ pageEncoding="UTF-8"%>
         var regex = /^[A-Za-z0-9+]{8,12}$/;
         // test(문자열) -> 정규표현식의 규칙에 어긋나지 않는 문자라면 true, 어긋난다면 false
         if (regex.test(document.getElementById('userId').value)) {
-          document.getElementById('userId').style.borderColor = 'green';
+          document.getElementById('userId').style.borderColor = 'white';
           document.getElementById('msgId').innerHTML =
             '아이디 중복 체크는 필수 입니다';
           idFlag = true;

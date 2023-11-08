@@ -3,7 +3,6 @@ package com.spring.timecinema.user.service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.spring.timecinema.user.dto.UserInfoResponseDTO;
 import com.spring.timecinema.user.dto.UserJoinRequestDTO;
 import com.spring.timecinema.user.entity.User;
 import com.spring.timecinema.user.mapper.IUserMapper;

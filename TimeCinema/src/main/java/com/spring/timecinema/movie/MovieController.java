@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.spring.timecinema.movie.dto.BoxResponseDto;
+import com.spring.timecinema.movie.dto.DetailResponseDto;
 import com.spring.timecinema.movie.entity.Era;
 
 import lombok.RequiredArgsConstructor;
@@ -33,9 +35,10 @@ public class MovieController {
 
 	// movie detail 페이지 열기
 	@GetMapping("/detail/{rowNum}")
-	public String movieDetail(@PathVariable int rowNum) {
-		log.info("detail요청 들어옴 rowNum: {}", rowNum);
-//		service.getMovieDetail();
+	public String movieDetail(@PathVariable int rowNum, Model model) {
+
+		model.addAttribute("detail", service.getMovieDetail(rowNum));
+		
 		return "movie/detail";
 	}
 	

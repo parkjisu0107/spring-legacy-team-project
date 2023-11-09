@@ -32,4 +32,14 @@
 	WHERE row_num=#{rowNum}
 </update>
 
+<select id="getBoxInfo" resultType="box">
+	SELECT
+		REPLACE(title, ' ', '') AS title, 
+	   	REPLACE(open_dt, '-', '') AS open_dt,
+	   	poster,
+	   	row_num
+	FROM box_office
+	WHERE row_num=#{rowNum}
+</select>
+
 </mapper>

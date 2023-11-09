@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -32,50 +34,38 @@ pageEncoding="UTF-8"%>
     <div class="image-box">
       <img
         class="image-thumbnail"
-        src="https://img.cgv.co.kr/Movie/Thumbnail/Poster/000087/87407/87407_320.jpg"
+        src="${detail.poster}"
       />
     </div>
     <div class="detail">
       <div class="detailposter">
         <img
-          src="https://img.cgv.co.kr/Movie/Thumbnail/Poster/000087/87407/87407_320.jpg"
+          src="${detail.poster}"
         />
       </div>
       <div class="div2">
         <div class="details">
           <!-- 영화명 -->
-          <p class="title1">30일</p>
+          <p class="title1">${detail.title}</p>
           <!-- 영화명(영문) -->
-          <p class="title2">Love Reset</p>
+          <p class="title2">${detail.titleEng}</p>
           <!-- 개봉 -->
-          <p class="title3">개봉 &emsp; &emsp; 2023.10.3</p>
+          <p class="title3">개봉 &emsp; &emsp; ${detail.openDt}</p>
           <!-- 국가 -->
-          <p class="title3">국가 &emsp; &emsp; 한국</p>
+          <p class="title3">국가 &emsp; &emsp; ${detail.nation}</p>
           <!-- 등급 -->
-          <p class="title3">등급 &emsp; &emsp; 12세이상관람가</p>
+          <p class="title3">등급 &emsp; &emsp; ${detail.rating}</p>
           <!-- 장르 -->
-          <p class="title3">장르 &emsp; &emsp; 코미디</p>
+          <p class="title3">장르 &emsp; &emsp; ${detail.type} / ${detail.genre}</p>
           <!-- 러닝타임 -->
-          <p class="title3">러닝타임 &nbsp; 119분</p>
+          <p class="title3">러닝타임 &nbsp; ${detail.runtime}</p>
         </div>
 
         <div class="content">
           <h4>줄거리</h4>
           <div class="text-wrapper">
             <span class="text">
-              “완벽한 저에게 신은 저 여자를 던지셨죠” 지성과 외모 그리고
-              찌질함까지 타고난, '정열'(강하늘). “모기 같은 존재죠. 존재의
-              이유를 모르겠는?”능력과 커리어 그리고 똘기까지 타고난,
-              '나라'(정소민). 영화처럼 만나 영화같은 사랑을 했지만서로의
-              찌질함과 똘기를 견디다 못해 마침내 완벽한 남남이 되기로
-              한다.그러나!완벽한 이별을 딱 D-30 앞둔 이들에게 찾아온 것은
-              줄거리끝 “완벽한 저에게 신은 저 여자를 던지셨죠” 지성과 외모
-              그리고 찌질함까지 타고난, '정열'(강하늘). “모기 같은 존재죠.
-              존재의 이유를 모르겠는?”능력과 커리어 그리고 똘기까지 타고난,
-              '나라'(정소민). 영화처럼 만나 영화같은 사랑을 했지만서로의
-              찌질함과 똘기를 견디다 못해 마침내 완벽한 남남이 되기로
-              한다.그러나!완벽한 이별을 딱 D-30 앞둔 이들에게 찾아온 것은
-              줄거리끝
+				${detail.plotText}
             </span>
             <!-- 더보기, 줄이기 텍스트 -->
             <span class="more-text">더보기</span>
@@ -92,36 +82,14 @@ pageEncoding="UTF-8"%>
         <div class="slider__wrap">
           <div class="slider__img">
             <div class="slider__inner">
-              <div class="slider">
-                <img
-                  src="https://img.cgv.co.kr/Movie/Thumbnail/StillCut/000087/87407/87407220141_727.jpg"
-                  alt="이미지1"
-                />
-              </div>
-              <div class="slider">
-                <img
-                  src="https://img.cgv.co.kr/Movie/Thumbnail/StillCut/000087/87407/87407220485_727.jpg"
-                  alt="이미지2"
-                />
-              </div>
-              <div class="slider">
-                <img
-                  src="https://img.cgv.co.kr/Movie/Thumbnail/StillCut/000087/87407/87407220407_727.jpg"
-                  alt="이미지3"
-                />
-              </div>
-              <div class="slider">
-                <img
-                  src="https://img.cgv.co.kr/Movie/Thumbnail/StillCut/000087/87407/87407220330_727.jpg"
-                  alt="이미지4"
-                />
-              </div>
-              <div class="slider">
-                <img
-                  src="https://img.cgv.co.kr/Movie/Thumbnail/StillCut/000087/87407/87407220329_727.jpg"
-                  alt="이미지5"
-                />
-              </div>
+              <c:forEach var="stll" items="${detail.stllList}">
+	              <div class="slider">
+	                <img
+	                  src="${stll}"
+	                  alt="스틸이미지"
+	                />
+	              </div>
+              </c:forEach>
             </div>
           </div>
         </div>

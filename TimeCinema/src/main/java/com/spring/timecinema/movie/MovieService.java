@@ -1,5 +1,7 @@
 package com.spring.timecinema.movie;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -17,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.spring.timecinema.movie.dto.BoxResponseDto;
+import com.spring.timecinema.movie.dto.DetailResponseDto;
 import com.spring.timecinema.movie.entity.BoxOffice;
 import com.spring.timecinema.movie.entity.Era;
 
@@ -36,6 +40,7 @@ public class MovieService {
 	@Value("${kmdb.reqUrl}")
 	private String reqUrl;
 
+	// BoxOffice 리스트 불러오기
 	public List<BoxOffice> getBoxOfficeList(int yearFrom) {
 		
 		List<BoxOffice> list = mapper.getBoxOfficeList(yearFrom);
@@ -56,14 +61,15 @@ public class MovieService {
 			
 	}
 
+	// BoxOffice 포스터 불러오기
 	public String getPoster(String openDt, String title) {
 		
-		JSONObject data = getMovieInfo(openDt, title);
+		JSONObject data = getMovieData(openDt, title);
 		
 	    // data에서 posters 꺼내기
 	    JSONArray resultArray = (JSONArray) data.get("Result");
 	    JSONObject result = (JSONObject) resultArray.get(0);
-	    String posters = (String) ((JSONObject) result).get("posters");
+	    String posters = (String) result.get("posters");
 	    
 	    // posters의 url 중 첫번째 url을 자르기
 	    String poster = posters.split("\\|")[0];
@@ -73,7 +79,7 @@ public class MovieService {
 	}
 	
 	// 영화 정보 JSON data 불러오기
-	public JSONObject getMovieInfo(String openDt, String title) {
+	public JSONObject getMovieData(String openDt, String title) {
 		
 		UriComponents builder = UriComponentsBuilder.fromHttpUrl(reqUrl)
 				.queryParam("ServiceKey", serviceKey)
@@ -125,6 +131,110 @@ public class MovieService {
 		
 		return data;
 		
+	}
+
+	public DetailResponseDto getMovieDetail(int rowNum) {
+		
+		BoxResponseDto box = getBoxInfo(rowNum);
+		
+		// result 불러오기
+		JSONObject data = getMovieData(box.getOpenDt(), box.getTitle());
+	    JSONArray resultArray = (JSONArray) data.get("Result");
+	    JSONObject result = (JSONObject) resultArray.get(0);
+		
+	    // titleEng
+	    String titleEng = (String) result.get("titleEng");
+	    
+	    // directors > director > directorNm
+	    JSONObject directors = (JSONObject) result.get("directors");
+	    JSONArray directorArray = (JSONArray) directors.get("director");
+	    JSONObject director = (JSONObject) directorArray.get(0);
+	    String directorNm = (String) director.get("directorNm");
+	    
+	    // actors > actor > actorNm
+	    JSONObject actors = (JSONObject) result.get("actors");
+	    JSONArray actorArray = (JSONArray) actors.get("actor");
+	    // 5명 리스트로
+	    List<String> actorList = new ArrayList<>();
+	    for(int i=0; i<5; i++) {
+	    	if(i > actorList.size()-1) break;
+	    	JSONObject actor = (JSONObject) actorArray.get(i);
+	    	String actorNm = (String) actor.get("actorNm");
+	    	actorList.add(actorNm);
+	    }
+	    
+	    // nation
+	    String nation = (String) ((JSONObject) result).get("nation");
+	    
+	    // company
+	    String company = (String) ((JSONObject) result).get("company");
+	    
+	    // plots > plot > plotText
+	    JSONObject plots = (JSONObject) result.get("plots");
+	    JSONArray plotArray = (JSONArray) plots.get("plot");
+	    JSONObject plot = (JSONObject) plotArray.get(0);
+	    String plotText = (String) plot.get("plotText");
+	    
+	    // runtime
+	    String runtime = (String) ((JSONObject) result).get("runtime");
+	    
+	    // rating
+	    String rating = (String) ((JSONObject) result).get("rating");
+	    
+	    // genre
+	    String genre = (String) ((JSONObject) result).get("genre");
+	    
+	    // type
+	    String type = (String) ((JSONObject) result).get("type");
+	    
+	    // keywords
+	    String keywords = (String) ((JSONObject) result).get("keywords");
+	    
+	    // stlls
+	    String stlls = (String) ((JSONObject) result).get("stlls");
+	    String[] arr = stlls.split("\\|");
+	    List<String> stllList = Arrays.asList(arr);
+	    
+	    // vods > vod > vodClass, vodUrl
+	    JSONObject vods = (JSONObject) result.get("vods");
+	    JSONArray vodArray = (JSONArray) vods.get("vod");
+	    JSONObject vod = (JSONObject) vodArray.get(0);
+	    String vodClass = (String) vod.get("vodClass");
+	    String vodUrl = (String) vod.get("vodUrl");
+	    
+	    return DetailResponseDto.builder()
+					    		.rowNum(box.getRowNum())
+					    		.title(box.getTitle())
+					    		.openDt(box.getOpenDt())
+					    		.poster(box.getPoster())
+							    .titleEng(titleEng)
+							    .directorNm(directorNm)
+							    .actorList(actorList)
+							    .nation(nation)
+							    .company(company)
+							    .plotText(plotText)
+							    .runtime(runtime)
+							    .rating(rating)
+							    .genre(genre)
+							    .type(type)
+							    .keywords(keywords)
+							    .stllList(stllList)
+							    .vodClass(vodClass)
+							    .vodUrl(vodUrl)
+							    .build();
+		
+		
+	}
+
+	public BoxResponseDto getBoxInfo(int rowNum) {
+		BoxOffice box = mapper.getBoxInfo(rowNum);
+		
+		return BoxResponseDto.builder()
+							.rowNum(box.getRowNum())
+							.title(box.getTitle())
+							.openDt(box.getOpenDt())
+							.poster(box.getPoster())
+							.build();
 	}
 	
 	

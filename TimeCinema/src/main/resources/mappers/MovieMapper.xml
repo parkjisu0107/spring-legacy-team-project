@@ -18,7 +18,8 @@
 	        	row_num
 	        FROM box_office
 	        WHERE SUBSTR(open_dt, 1, 4) >= #{yearFrom}
-	        AND SUBSTR(open_dt, 1, 4) < #{yearFrom} + 10
+		        AND SUBSTR(open_dt, 1, 4) < #{yearFrom} + 10
+		        AND row_num < 30000
 	        ORDER BY viewer DESC
 	    )tbl
 	)
@@ -41,5 +42,14 @@
 	FROM box_office
 	WHERE row_num=#{rowNum}
 </select>
+
+<update id="setMovie">
+	MERGE INTO box_office
+	USING DUAL
+    	ON (row_num = #{rowNum})
+	WHEN NOT MATCHED THEN
+	    INSERT (row_num, title, open_dt, poster)
+	    VALUES (#{rowNum}, #{title}, #{openDt}, #{poster})
+</update>
 
 </mapper>

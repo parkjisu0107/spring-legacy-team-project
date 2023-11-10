@@ -1,5 +1,6 @@
 package com.spring.timecinema.movie;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -74,6 +75,7 @@ public class MovieService {
 		
 	    // data에서 posters 꺼내기
 	    JSONArray resultArray = (JSONArray) data.get("Result");
+
 	    JSONObject result = (JSONObject) resultArray.get(0);
 	    String posters = (String) result.get("posters");
 	    
@@ -81,11 +83,14 @@ public class MovieService {
 	    String poster = posters.split("\\|")[0];
 	    
 	    return poster;
+		    
 
 	}
 	
 	// KMDB) 영화 정보 JSON data 불러오기
 	public JSONObject getMovieData(String openDt, String title) {
+		
+		String createYear = openDt.substring(0, 4);
 		
 		UriComponents builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
 				.queryParam("ServiceKey", serviceKey)
@@ -93,9 +98,7 @@ public class MovieService {
 				.queryParam("releaseDte", openDt)
 				.queryParam("title", title)
 				.build();
-		
-		log.info(builder.toString());
-		
+
 		HttpHeaders headers = new HttpHeaders();
 		
 		RestTemplate template = new RestTemplate();
@@ -116,9 +119,8 @@ public class MovieService {
 		    	builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
 						.queryParam("ServiceKey", serviceKey)
 						.queryParam("title", title)
+						.queryParam("createDte", createYear)
 						.build();
-		    	
-		    	log.info(builder.toString());
 		    	
 		    	responseEntity 
 				= template.exchange(builder.toUriString(), HttpMethod.GET, requEntity, String.class);
@@ -243,13 +245,19 @@ public class MovieService {
 		
 		String dateFrom = yearFrom + "-01-01";
 		String dateTo = yearTo + "-12-31";
+		if(yearTo == LocalDate.now().getYear()) {
+			dateTo = yearTo + "-" + 
+					LocalDate.now().getMonthValue() + "-" +
+					LocalDate.now().getDayOfMonth();
+		}
 		
+
 		UriComponents builder = UriComponentsBuilder.fromHttpUrl(tmdbUrl)
 				.queryParam("include_adult", "true")
 				.queryParam("language", "ko")
 				.queryParam("page", "1")
 				.queryParam("primary_release_date.gte", dateFrom)
-				.queryParam("primary_release_date.lte", dateTo)
+				.queryParam("release_date.lte", dateTo)
 				.queryParam("region", "KR")
 				.queryParam("sort_by", "popularity.desc")
 				.build();
@@ -281,15 +289,13 @@ public class MovieService {
 		    	openDt = openDt.replaceAll("-", "");
 		    	String poster = "https://image.tmdb.org/t/p/w300" + (String) ((JSONObject) result).get("poster_path");
 		    	
-		    	popularityList.add(Movie.builder()
-									    	.title(title)
-									    	.openDt(openDt)
-									    	.poster(poster)
-									    	.rank(rank)
-									    	.rowNum(rowNum)
-									    	.build());
+		    	Movie movie = new Movie(rank, rowNum, title, openDt, poster);
+		    	mapper.setMovie(movie);
+		    	
+		    	popularityList.add(movie);
 		    	rank++;
 		    }
+		    
 		    
 		} catch (ParseException e) {
 			e.printStackTrace();

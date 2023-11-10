@@ -15,5 +15,7 @@ public interface IMovieMapper {
 
 	Movie getBoxInfo(int rowNum);
 
+	void setMovie(Movie movie);
+
 
 }

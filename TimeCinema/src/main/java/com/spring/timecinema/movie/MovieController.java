@@ -27,7 +27,7 @@ public class MovieController {
 	@GetMapping("/{era}")
 	public String time(@PathVariable String era,Model model) {
 		Era targetEra = new Era(era);
-//		model.addAttribute("box", service.getBoxOfficeList(targetEra.getYearFrom()));
+		model.addAttribute("box", service.getBoxOfficeList(targetEra.getYearFrom()));
 		model.addAttribute("pop", service.getPopularityList(targetEra.getYearFrom(), targetEra.getYearTo()));
 		model.addAttribute("era", targetEra);
 		return "movie/time";
@@ -50,13 +50,5 @@ public class MovieController {
 		return "movie/detail";
 	}
 	
-	
-	@GetMapping("/detail/{openDt}/{title}")
-	public String popularityDetail(@PathVariable String openDt, @PathVariable String title) {
-		
-//		DetailResponseDto dto = service.getMovieDetail(openDt, title);
-		
-		return "movie/detail";
-	}
 	
 }

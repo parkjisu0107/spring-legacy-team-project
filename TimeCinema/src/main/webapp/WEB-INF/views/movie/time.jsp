@@ -48,7 +48,7 @@ pageEncoding="UTF-8"%>
       <div class="swiper-wrapper">
          <c:forEach var="b" items="${box}">
             <div class="swiper-slide">
-              <a href="${pageContext.request.contextPath}/movie/detail/${p.rowNum}" class="wrap-poster">
+              <a href="${pageContext.request.contextPath}/movie/detail/${b.rowNum}" class="wrap-poster">
                 <img src="${b.poster}" alt=""/>
               </a>
 	            <span class="box-rank">${b.rank}</span>
@@ -65,7 +65,7 @@ pageEncoding="UTF-8"%>
       <div class="swiper-wrapper">
          <c:forEach var="p" items="${pop}">
             <div class="swiper-slide">
-              <a href="${pageContext.request.contextPath}/movie/detail/${p.openDt}/${p.title}" class="wrap-poster">
+              <a href="${pageContext.request.contextPath}/movie/detail/${p.rowNum}" class="wrap-poster">
                 <img src="${p.poster}" alt=""/>
               </a>
 	            <span class="box-rank">${p.rank}</span>

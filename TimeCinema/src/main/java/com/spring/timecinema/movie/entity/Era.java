@@ -1,5 +1,7 @@
 package com.spring.timecinema.movie.entity;
 
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -29,7 +31,7 @@ public class Era {
 		if(era.equals("10")) this.yearFrom = 2010;
 		if(era.equals("20")) {
 			this.yearFrom = 2020;
-			this.yearTo = 2023;
+			this.yearTo = LocalDate.now().getYear();
 		} else {
 			this.yearTo = yearFrom + 9;
 		}

@@ -5,13 +5,23 @@ prefix="c" %>
 <html>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <link
       rel="stylesheet"
       href="${pageContext.request.contextPath}/css/header.css"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap"
       rel="stylesheet"
@@ -21,7 +31,10 @@ prefix="c" %>
   <body>
     <nav class="navbar">
       <div class="navbar__log">
-        <i class="fa-solid fa-laptop" style="color: #9c9c9c"></i>
+        <i
+          class="fa-solid fa-laptop"
+          style="color: #9c9c9c"
+        ></i>
         <a href="${pageContext.request.contextPath}/">TimeCinema</a>
       </div>
       <ul class="navbar__menu">
@@ -33,9 +46,20 @@ prefix="c" %>
         <li><a href="${pageContext.request.contextPath}/movie/20">20s</a></li>
       </ul>
       <div class="box">
-        <input type="text" placeholder="Search..." />
-        <a href="#">
-          <i class="fa-solid fa-magnifying-glass" style="color: #9c9c9c"></i>
+        <input
+          type="text"
+          id="query"
+          name="query"
+          placeholder="Search..."
+        />
+        <a
+          href="#"
+          id="search-btn"
+        >
+          <i
+            class="fa-solid fa-magnifying-glass"
+            style="color: #9c9c9c"
+          ></i>
         </a>
       </div>
       <ul class="navbar__login">
@@ -55,8 +79,14 @@ prefix="c" %>
           </li>
         </c:if>
       </ul>
-      <a href="#" class="navbar__toogleBtn">
-        <i class="fa-solid fa-bars" style="color: #9c9c9c"></i>
+      <a
+        href="#"
+        class="navbar__toogleBtn"
+      >
+        <i
+          class="fa-solid fa-bars"
+          style="color: #9c9c9c"
+        ></i>
       </a>
     </nav>
 
@@ -74,6 +104,16 @@ prefix="c" %>
         menu.classList.toggle('active');
         icons.classList.toggle('active');
       });
+
+      // 검색 요청 보내기
+      const $query = document.getElementById('query');
+      $query.onchange = function (e) {
+        $query.value = e.target.value;
+      };
+      document.getElementById('search-btn').onclick = function () {
+        location.href =
+          '${pageContext.request.contextPath}/movie/search/' + $query.value;
+      };
     </script>
   </body>
 </html>

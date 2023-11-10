@@ -303,6 +303,17 @@ public class MovieService {
 		
 	    return popularityList;
 	}
+
+	public void getResultList(String query) {
+
+		UriComponents builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
+													.queryParam("ServiceKey", serviceKey)
+													.queryParam("query", query)
+													.build();
+
+		
+		
+	}
 	
 	
 }

@@ -5,15 +5,15 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.spring.timecinema.movie.dto.BoxResponseDto;
-import com.spring.timecinema.movie.entity.BoxOffice;
+import com.spring.timecinema.movie.entity.Movie;
 
 public interface IMovieMapper {
 
-	List<BoxOffice> getBoxOfficeList(int yearFrom);
+	List<Movie> getBoxOfficeList(int yearFrom);
 
 	void setPoster(@Param("rowNum")int rowNum, @Param("poster") String poster);
 
-	BoxOffice getBoxInfo(int rowNum);
+	Movie getBoxInfo(int rowNum);
 
 
 }

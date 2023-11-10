@@ -13,7 +13,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BoxOffice {
+public class Movie {
 	private int rank;
 	private int rowNum;
 	private String title;

@@ -31,7 +31,7 @@ public class Era {
 			this.yearFrom = 2020;
 			this.yearTo = 2023;
 		} else {
-			this.yearTo = yearFrom + 10;
+			this.yearTo = yearFrom + 9;
 		}
 
 	}

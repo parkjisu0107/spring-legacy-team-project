@@ -23,24 +23,40 @@ public class MovieController {
 
 	private final MovieService service;
 	
-	// movie time 페이지 열기
+	// movie time 페이지 요청
 	@GetMapping("/{era}")
 	public String time(@PathVariable String era,Model model) {
 		Era targetEra = new Era(era);
-		
-		model.addAttribute("box", service.getBoxOfficeList(targetEra.getYearFrom()));
+//		model.addAttribute("box", service.getBoxOfficeList(targetEra.getYearFrom()));
+		model.addAttribute("pop", service.getPopularityList(targetEra.getYearFrom(), targetEra.getYearTo()));
 		model.addAttribute("era", targetEra);
 		return "movie/time";
 	}
 
-	// movie detail 페이지 열기
+	// movie detail 페이지 요청 (boxOffice)
 	@GetMapping("/detail/{rowNum}")
-	public String movieDetail(@PathVariable int rowNum, Model model) {
-
-		model.addAttribute("detail", service.getMovieDetail(rowNum));
+	public String boxOfficeDetail(@PathVariable int rowNum, Model model) {
+		
+		BoxResponseDto box = service.getBoxInfo(rowNum);
+		DetailResponseDto dto = service.getMovieDetail(box.getOpenDt(), box.getTitle());
+		
+		dto.setRowNum(box.getRowNum());
+		dto.setTitle(box.getTitle());
+		dto.setOpenDt(box.getOpenDt());
+		dto.setPoster(box.getPoster());
+		
+		model.addAttribute("detail", dto);
 		
 		return "movie/detail";
 	}
 	
+	
+	@GetMapping("/detail/{openDt}/{title}")
+	public String popularityDetail(@PathVariable String openDt, @PathVariable String title) {
+		
+//		DetailResponseDto dto = service.getMovieDetail(openDt, title);
+		
+		return "movie/detail";
+	}
 	
 }

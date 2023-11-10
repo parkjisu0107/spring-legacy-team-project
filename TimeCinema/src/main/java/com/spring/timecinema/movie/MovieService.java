@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
@@ -21,8 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.spring.timecinema.movie.dto.BoxResponseDto;
 import com.spring.timecinema.movie.dto.DetailResponseDto;
-import com.spring.timecinema.movie.entity.BoxOffice;
-import com.spring.timecinema.movie.entity.Era;
+import com.spring.timecinema.movie.entity.Movie;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,18 +34,25 @@ public class MovieService {
 
 	private final IMovieMapper mapper;
 	
+	// KMDB
 	@Value("${kmdb.serviceKey}")
 	private String serviceKey;
 	@Value("${kmdb.reqUrl}")
-	private String reqUrl;
+	private String kmdbUrl;
+	
+	// TMDB
+	@Value("${tmdb.auth}")
+	private String authKey;
+	@Value("${tmdb.reqUrl}")
+	private String tmdbUrl;
 
 	// BoxOffice 리스트 불러오기
-	public List<BoxOffice> getBoxOfficeList(int yearFrom) {
+	public List<Movie> getBoxOfficeList(int yearFrom) {
 		
-		List<BoxOffice> list = mapper.getBoxOfficeList(yearFrom);
+		List<Movie> list = mapper.getBoxOfficeList(yearFrom);
 		
 		// 포스터 존재 여부 확인하고 불러오기
-		for(BoxOffice b : list) {
+		for(Movie b : list) {
 			if(b.getPoster()==null) {
 				String poster = getPoster(b.getOpenDt(), b.getTitle());
 				int rowNum = b.getRowNum();
@@ -78,10 +84,10 @@ public class MovieService {
 
 	}
 	
-	// 영화 정보 JSON data 불러오기
+	// KMDB) 영화 정보 JSON data 불러오기
 	public JSONObject getMovieData(String openDt, String title) {
 		
-		UriComponents builder = UriComponentsBuilder.fromHttpUrl(reqUrl)
+		UriComponents builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
 				.queryParam("ServiceKey", serviceKey)
 				.queryParam("releaseDts", openDt)
 				.queryParam("releaseDte", openDt)
@@ -107,7 +113,7 @@ public class MovieService {
 		    
 		    // 검색 결과 존재 확인 및 재검색
 		    if(jsonObject.get("TotalCount").toString().equals("0")) {
-		    	builder = UriComponentsBuilder.fromHttpUrl(reqUrl)
+		    	builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
 						.queryParam("ServiceKey", serviceKey)
 						.queryParam("title", title)
 						.build();
@@ -133,12 +139,11 @@ public class MovieService {
 		
 	}
 
-	public DetailResponseDto getMovieDetail(int rowNum) {
-		
-		BoxResponseDto box = getBoxInfo(rowNum);
+	// KMDB)영화 상세정보 불러오기
+	public DetailResponseDto getMovieDetail(String openDt, String title) {
 		
 		// result 불러오기
-		JSONObject data = getMovieData(box.getOpenDt(), box.getTitle());
+		JSONObject data = getMovieData(openDt, title);
 	    JSONArray resultArray = (JSONArray) data.get("Result");
 	    JSONObject result = (JSONObject) resultArray.get(0);
 		
@@ -203,10 +208,6 @@ public class MovieService {
 	    String vodUrl = (String) vod.get("vodUrl");
 	    
 	    return DetailResponseDto.builder()
-					    		.rowNum(box.getRowNum())
-					    		.title(box.getTitle())
-					    		.openDt(box.getOpenDt())
-					    		.poster(box.getPoster())
 							    .titleEng(titleEng)
 							    .directorNm(directorNm)
 							    .actorList(actorList)
@@ -227,7 +228,7 @@ public class MovieService {
 	}
 
 	public BoxResponseDto getBoxInfo(int rowNum) {
-		BoxOffice box = mapper.getBoxInfo(rowNum);
+		Movie box = mapper.getBoxInfo(rowNum);
 		
 		return BoxResponseDto.builder()
 							.rowNum(box.getRowNum())
@@ -235,6 +236,66 @@ public class MovieService {
 							.openDt(box.getOpenDt())
 							.poster(box.getPoster())
 							.build();
+	}
+
+	// TMDB
+	public List<Movie> getPopularityList(int yearFrom, int yearTo) {
+		
+		String dateFrom = yearFrom + "-01-01";
+		String dateTo = yearTo + "-12-31";
+		
+		UriComponents builder = UriComponentsBuilder.fromHttpUrl(tmdbUrl)
+				.queryParam("include_adult", "true")
+				.queryParam("language", "ko")
+				.queryParam("page", "1")
+				.queryParam("primary_release_date.gte", dateFrom)
+				.queryParam("primary_release_date.lte", dateTo)
+				.queryParam("region", "KR")
+				.queryParam("sort_by", "popularity.desc")
+				.build();
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", authKey);
+		headers.add("accept", "application/json");
+		
+		RestTemplate template = new RestTemplate();
+		HttpEntity<Object> requEntity = new HttpEntity<>(headers);
+		
+		ResponseEntity<String> responseEntity 
+		= template.exchange(builder.toUriString(), HttpMethod.GET, requEntity, String.class);
+		
+		List<Movie> popularityList = new ArrayList<>();
+		
+		String responseData = responseEntity.getBody();
+	    JSONParser parser = new JSONParser();
+	    try {
+			JSONObject jsonObject = (JSONObject) parser.parse(responseData);
+		    JSONArray resultsArray = (JSONArray) jsonObject.get("results");
+		    
+		    int rank = 1;
+		    for(Object result : resultsArray) {
+		    	String title = (String) ((JSONObject) result).get("title");
+		    	String openDt = (String) ((JSONObject) result).get("release_date");
+		    	Long id = (Long) ((JSONObject) result).get("id");
+		    	int rowNum = Integer.parseInt(String.valueOf(id))+ 10000000;
+		    	openDt = openDt.replaceAll("-", "");
+		    	String poster = "https://image.tmdb.org/t/p/w300" + (String) ((JSONObject) result).get("poster_path");
+		    	
+		    	popularityList.add(Movie.builder()
+									    	.title(title)
+									    	.openDt(openDt)
+									    	.poster(poster)
+									    	.rank(rank)
+									    	.rowNum(rowNum)
+									    	.build());
+		    	rank++;
+		    }
+		    
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+	    return popularityList;
 	}
 	
 	

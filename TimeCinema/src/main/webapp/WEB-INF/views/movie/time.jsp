@@ -41,14 +41,14 @@ pageEncoding="UTF-8"%>
       </div>
     </div>
 
-    <!-- Swiper Box Office -->
+    <!-- Swiper Box Office List -->
     <div class="swiper mySwiper">
       <div class="swiper-button swiper-button-next"></div>
       <div class="swiper-button swiper-button-prev"></div>
       <div class="swiper-wrapper">
          <c:forEach var="b" items="${box}">
             <div class="swiper-slide">
-              <a href="${pageContext.request.contextPath}/movie/detail/${b.rowNum}" class="wrap-poster">
+              <a href="${pageContext.request.contextPath}/movie/detail/${p.rowNum}" class="wrap-poster">
                 <img src="${b.poster}" alt=""/>
               </a>
 	            <span class="box-rank">${b.rank}</span>
@@ -58,104 +58,23 @@ pageEncoding="UTF-8"%>
       </div>
     </div>
 
-        <!-- Swiper   -->
-        <div class="swiper mySwiper">
-          <div class="swiper-button swiper-button-next"></div>
-          <div class="swiper-button swiper-button-prev"></div>
-    
-          <div class="swiper-wrapper">
-            <div
-              class="swiper-slide"
-              data-era="20's"
-            >
-              <img
-                src="${pageContext.request.contextPath}/img/20's.jpg"
-                alt=""
-              />
-              <span class="box-rank">
-                1
-              </span>
-              <span class="box-title">
-                제목
-              </span>
+    <!-- Swiper Populariy List -->
+    <div class="swiper mySwiper">
+      <div class="swiper-button swiper-button-next"></div>
+      <div class="swiper-button swiper-button-prev"></div>
+      <div class="swiper-wrapper">
+         <c:forEach var="p" items="${pop}">
+            <div class="swiper-slide">
+              <a href="${pageContext.request.contextPath}/movie/detail/${p.openDt}/${p.title}" class="wrap-poster">
+                <img src="${p.poster}" alt=""/>
+              </a>
+	            <span class="box-rank">${p.rank}</span>
+	            <span class="box-title">${p.title}</span>
             </div>
-            <div
-              class="swiper-slide"
-              data-era="10's"
-            >
-              <img
-                src="${pageContext.request.contextPath}/img/10's.jpg"
-                alt=""
-              />
-              <span class="box-rank">
-                1
-              </span>
-              <span class="box-title">
-                제목
-              </span>
-            </div>
-            <div
-              class="swiper-slide"
-              data-era="00's"
-            >
-              <img
-                src="${pageContext.request.contextPath}/img/00's.jpg"
-                alt=""
-              />
-              <span class="box-rank">
-                1
-              </span>
-              <span class="box-title">
-                제목
-              </span>
-            </div>
-            <div
-              class="swiper-slide"
-              data-era="90's"
-            >
-              <img
-                src="${pageContext.request.contextPath}/img/90's.jpg"
-                alt=""
-              />
-              <span class="box-rank">
-                1
-              </span>
-              <span class="box-title">
-                제목
-              </span>
-            </div>
-            <div
-              class="swiper-slide"
-              data-era="80's"
-            >
-              <img
-                src="${pageContext.request.contextPath}/img/80's.jpg"
-                alt=""
-              />
-              <span class="box-rank">
-                1
-              </span>
-              <span class="box-title">
-                제목
-              </span>
-            </div>
-            <div
-              class="swiper-slide"
-              data-era="70's"
-            >
-              <img
-                src="${pageContext.request.contextPath}/img/70's.jpg"
-                alt=""
-              />
-              <span class="box-rank">
-                1
-              </span>
-              <span class="box-title">
-                제목
-              </span>
-            </div>
-          </div>
-        </div>
+          </c:forEach> 
+      </div>
+    </div>
+
         
         <%@ include file="../include/footer.jsp"  %>
 

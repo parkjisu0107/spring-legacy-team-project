@@ -21,8 +21,9 @@
 		별칭을 대신 사용할 수 있게 하는 설정 -->
 
 	<typeAliases>
-		<typeAlias type="com.spring.timecinema.movie.entity.Movie" alias="box"/>
-		<typeAlias type="com.spring.timecinema.user.entity.User" alias="user"/>
+		<typeAlias type="com.spring.timecinema.movie.entity.Time" alias="time"/>
+		<typeAlias type="com.spring.timecinema.movie.entity.Movie" alias="movie"/>
+		<typeAlias type="com.spring.timecinema.movie.entity.Movie" alias="user"/>
 	</typeAliases>
 
 

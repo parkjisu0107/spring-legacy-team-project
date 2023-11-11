@@ -22,7 +22,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.spring.timecinema.movie.dto.BoxResponseDto;
 import com.spring.timecinema.movie.dto.DetailResponseDto;
+import com.spring.timecinema.movie.dto.TimeResponseDTO;
+import com.spring.timecinema.movie.entity.ApiResultTotal;
 import com.spring.timecinema.movie.entity.Movie;
+import com.spring.timecinema.movie.entity.Time;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,56 +51,81 @@ public class MovieService {
 	private String tmdbUrl;
 
 	// BoxOffice 리스트 불러오기
-	public List<Movie> getBoxOfficeList(int yearFrom) {
+	public List<TimeResponseDTO> getBoxOfficeList(int yearFrom) {
 		
-		List<Movie> list = mapper.getBoxOfficeList(yearFrom);
+		// boxOffice 순위 리스트 title(공백o) openDt(1111.11.11)
+		List<Time> list = mapper.getBoxOfficeList(yearFrom);
 		
-		// 포스터 존재 여부 확인하고 불러오기
-		for(Movie b : list) {
-			if(b.getPoster()==null) {
-				String poster = getPoster(b.getOpenDt(), b.getTitle());
-				int rowNum = b.getRowNum();
-				mapper.setPoster(rowNum, poster);
-				b.setPoster(poster);
-			}
-		}
+		List<TimeResponseDTO> dtoList = new ArrayList<>();
 		
-		return list;
-		
-		
+		// 각 영화가 Movie table에 존재하는지 검색
+		for(Time t : list) {
+			String movieId = getMovieId(t);
 			
+			// 없으면 KMDB에서 검색 후 Movie DB에 저장
+			if(movieId == null) {
+				setMovie(t.getTitle(), t.getOpenDt());
+			}
+						
+			movieId = getMovieId(t);
+			
+			// Movie DB에서 영화 정보 가져오기
+			Movie movie = getMovie(movieId);
+						
+			dtoList.add(TimeResponseDTO.builder()
+										.rank(t.getRank())
+										.title(movie.getTitle())
+										.openDt(movie.getOpenDt())
+										.poster(movie.getPoster())
+										.movieId(movie.getMovieId())
+										.build());
+
+		}// end for
+		
+		return dtoList;		
 	}
 
-	// BoxOffice 포스터 불러오기
-	public String getPoster(String openDt, String title) {
-		
-		JSONObject data = getMovieData(openDt, title);
-		
-	    // data에서 posters 꺼내기
-	    JSONArray resultArray = (JSONArray) data.get("Result");
 
-	    JSONObject result = (JSONObject) resultArray.get(0);
-	    String posters = (String) result.get("posters");
-	    
-	    // posters의 url 중 첫번째 url을 자르기
-	    String poster = posters.split("\\|")[0];
-	    
-	    return poster;
-		    
+	private Movie getMovie(String movieId) {
+		return mapper.getMovie(movieId);
+	}
 
+
+	private String getMovieId(Time t) {
+		return mapper.checkMovie(t.getTitle(), t.getOpenDt());
+	}
+
+	// title 공백 있음, 2023.01.01
+	private void setMovie(String title, String openDt) {
+		
+		String reqTitle = title.replaceAll(" ", "");
+		String reqOpenDt = openDt.replaceAll("\\.", "-");
+		
+		ApiResultTotal info = getApiInfo(reqTitle, reqOpenDt);
+		
+		mapper.setMovie(Movie.builder()
+							.title(title)
+							.movieId(info.getMovieId())
+							.poster(info.getPoster())
+							.openDt(openDt)
+							.build());
+
+		
 	}
 	
 	// KMDB) 영화 정보 JSON data 불러오기
-	public JSONObject getMovieData(String openDt, String title) {
+	public JSONObject getApiData(String title, String openDt) {
 		
 		String createYear = openDt.substring(0, 4);
 		
 		UriComponents builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
 				.queryParam("ServiceKey", serviceKey)
 				.queryParam("releaseDts", openDt)
-				.queryParam("releaseDte", openDt)
+				.queryParam("createDte", openDt)
 				.queryParam("title", title)
 				.build();
+		
+		log.info(builder.toString());
 
 		HttpHeaders headers = new HttpHeaders();
 		
@@ -119,8 +147,11 @@ public class MovieService {
 		    	builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
 						.queryParam("ServiceKey", serviceKey)
 						.queryParam("title", title)
+						.queryParam("type", "극영화")
 						.queryParam("createDte", createYear)
 						.build();
+		    	
+		    	log.info(builder.toString());
 		    	
 		    	responseEntity 
 				= template.exchange(builder.toUriString(), HttpMethod.GET, requEntity, String.class);
@@ -141,16 +172,28 @@ public class MovieService {
 		
 	}
 
-	// KMDB)영화 상세정보 불러오기
-	public DetailResponseDto getMovieDetail(String openDt, String title) {
+	// KMDB) Api data parsing
+	public ApiResultTotal getApiInfo(String reqTitle, String reqOpenDt) {
 		
 		// result 불러오기
-		JSONObject data = getMovieData(openDt, title);
+		log.info("요청 제목: {}, 개봉일: {}", reqTitle, reqOpenDt);
+		JSONObject data = getApiData(reqTitle, reqOpenDt);
+		
 	    JSONArray resultArray = (JSONArray) data.get("Result");
 	    JSONObject result = (JSONObject) resultArray.get(0);
-		
+	    
+	    // movieId
+	    String movieId = (String) result.get("DOCID");
+		log.info("movieId: {}", movieId);
+	    
 	    // titleEng
 	    String titleEng = (String) result.get("titleEng");
+	    log.info("titleEng: {}", titleEng);
+	    
+	    // posters > poster
+	    String posters = (String) result.get("posters");
+	    String poster = posters.split("\\|")[0];
+	    log.info("poster: {}", poster);
 	    
 	    // directors > director > directorNm
 	    JSONObject directors = (JSONObject) result.get("directors");
@@ -209,111 +252,113 @@ public class MovieService {
 	    String vodClass = (String) vod.get("vodClass");
 	    String vodUrl = (String) vod.get("vodUrl");
 	    
-	    return DetailResponseDto.builder()
-							    .titleEng(titleEng)
-							    .directorNm(directorNm)
-							    .actorList(actorList)
-							    .nation(nation)
-							    .company(company)
-							    .plotText(plotText)
-							    .runtime(runtime)
-							    .rating(rating)
-							    .genre(genre)
-							    .type(type)
-							    .keywords(keywords)
-							    .stllList(stllList)
-							    .vodClass(vodClass)
-							    .vodUrl(vodUrl)
-							    .build();
-		
-		
-	}
-
-	public BoxResponseDto getBoxInfo(int rowNum) {
-		Movie box = mapper.getBoxInfo(rowNum);
-		
-		return BoxResponseDto.builder()
-							.rowNum(box.getRowNum())
-							.title(box.getTitle())
-							.openDt(box.getOpenDt())
-							.poster(box.getPoster())
-							.build();
-	}
-
-	// TMDB
-	public List<Movie> getPopularityList(int yearFrom, int yearTo) {
-		
-		String dateFrom = yearFrom + "-01-01";
-		String dateTo = yearTo + "-12-31";
-		if(yearTo == LocalDate.now().getYear()) {
-			dateTo = yearTo + "-" + 
-					LocalDate.now().getMonthValue() + "-" +
-					LocalDate.now().getDayOfMonth();
-		}
-		
-
-		UriComponents builder = UriComponentsBuilder.fromHttpUrl(tmdbUrl)
-				.queryParam("include_adult", "true")
-				.queryParam("language", "ko")
-				.queryParam("page", "1")
-				.queryParam("primary_release_date.gte", dateFrom)
-				.queryParam("release_date.lte", dateTo)
-				.queryParam("region", "KR")
-				.queryParam("sort_by", "popularity.desc")
-				.build();
-		
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", authKey);
-		headers.add("accept", "application/json");
-		
-		RestTemplate template = new RestTemplate();
-		HttpEntity<Object> requEntity = new HttpEntity<>(headers);
-		
-		ResponseEntity<String> responseEntity 
-		= template.exchange(builder.toUriString(), HttpMethod.GET, requEntity, String.class);
-		
-		List<Movie> popularityList = new ArrayList<>();
-		
-		String responseData = responseEntity.getBody();
-	    JSONParser parser = new JSONParser();
-	    try {
-			JSONObject jsonObject = (JSONObject) parser.parse(responseData);
-		    JSONArray resultsArray = (JSONArray) jsonObject.get("results");
-		    
-		    int rank = 1;
-		    for(Object result : resultsArray) {
-		    	String title = (String) ((JSONObject) result).get("title");
-		    	String openDt = (String) ((JSONObject) result).get("release_date");
-		    	Long id = (Long) ((JSONObject) result).get("id");
-		    	int rowNum = Integer.parseInt(String.valueOf(id))+ 10000000;
-		    	openDt = openDt.replaceAll("-", "");
-		    	String poster = "https://image.tmdb.org/t/p/w300" + (String) ((JSONObject) result).get("poster_path");
-		    	
-		    	Movie movie = new Movie(rank, rowNum, title, openDt, poster);
-		    	mapper.setMovie(movie);
-		    	
-		    	popularityList.add(movie);
-		    	rank++;
-		    }
-		    
-		    
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
-	    return popularityList;
-	}
-
-	public void getResultList(String query) {
-
-		UriComponents builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
-													.queryParam("ServiceKey", serviceKey)
-													.queryParam("query", query)
-													.build();
-
-		
+	    return ApiResultTotal.builder()
+	    					.movieId(movieId)
+	    					.poster(poster)
+						    .titleEng(titleEng)
+						    .directorNm(directorNm)
+						    .actorList(actorList)
+						    .nation(nation)
+						    .company(company)
+						    .plotText(plotText)
+						    .runtime(runtime)
+						    .rating(rating)
+						    .genre(genre)
+						    .type(type)
+						    .keywords(keywords)
+						    .stllList(stllList)
+						    .vodClass(vodClass)
+						    .vodUrl(vodUrl)
+						    .build();
+	
 		
 	}
+
+//	public BoxResponseDto getBoxInfo(int rowNum) {
+//		Time box = mapper.getBoxInfo(rowNum);
+//		
+//		return BoxResponseDto.builder()
+//							.rowNum(box.getRowNum())
+//							.title(box.getTitle())
+//							.openDt(box.getOpenDt())
+//							.poster(box.getPoster())
+//							.build();
+//	}
+//
+//	// TMDB
+//	public List<Time> getPopularityList(int yearFrom, int yearTo) {
+//		
+//		String dateFrom = yearFrom + "-01-01";
+//		String dateTo = yearTo + "-12-31";
+//		if(yearTo == LocalDate.now().getYear()) {
+//			dateTo = yearTo + "-" + 
+//					LocalDate.now().getMonthValue() + "-" +
+//					LocalDate.now().getDayOfMonth();
+//		}
+//		
+//
+//		UriComponents builder = UriComponentsBuilder.fromHttpUrl(tmdbUrl)
+//				.queryParam("include_adult", "true")
+//				.queryParam("language", "ko")
+//				.queryParam("page", "1")
+//				.queryParam("primary_release_date.gte", dateFrom)
+//				.queryParam("release_date.lte", dateTo)
+//				.queryParam("region", "KR")
+//				.queryParam("sort_by", "popularity.desc")
+//				.build();
+//		
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.add("Authorization", authKey);
+//		headers.add("accept", "application/json");
+//		
+//		RestTemplate template = new RestTemplate();
+//		HttpEntity<Object> requEntity = new HttpEntity<>(headers);
+//		
+//		ResponseEntity<String> responseEntity 
+//		= template.exchange(builder.toUriString(), HttpMethod.GET, requEntity, String.class);
+//		
+//		List<Time> popularityList = new ArrayList<>();
+//		
+//		String responseData = responseEntity.getBody();
+//	    JSONParser parser = new JSONParser();
+//	    try {
+//			JSONObject jsonObject = (JSONObject) parser.parse(responseData);
+//		    JSONArray resultsArray = (JSONArray) jsonObject.get("results");
+//		    
+//		    int rank = 1;
+//		    for(Object result : resultsArray) {
+//		    	String title = (String) ((JSONObject) result).get("title");
+//		    	String openDt = (String) ((JSONObject) result).get("release_date");
+//		    	Long id = (Long) ((JSONObject) result).get("id");
+//		    	int rowNum = Integer.parseInt(String.valueOf(id))+ 10000000;
+//		    	openDt = openDt.replaceAll("-", "");
+//		    	String poster = "https://image.tmdb.org/t/p/w300" + (String) ((JSONObject) result).get("poster_path");
+//		    	
+//		    	Time movie = new Time(rank, rowNum, title, openDt, poster);
+//		    	mapper.setMovie(movie);
+//		    	
+//		    	popularityList.add(movie);
+//		    	rank++;
+//		    }
+//		    
+//		    
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
+//		
+//	    return popularityList;
+//	}
+//
+//	public void getResultList(String query) {
+//
+//		UriComponents builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
+//													.queryParam("ServiceKey", serviceKey)
+//													.queryParam("query", query)
+//													.build();
+//
+//		
+//		
+//	}
 	
 	
 }

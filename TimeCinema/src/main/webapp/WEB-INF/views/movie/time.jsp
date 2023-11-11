@@ -48,7 +48,7 @@ pageEncoding="UTF-8"%>
       <div class="swiper-wrapper">
          <c:forEach var="b" items="${box}">
             <div class="swiper-slide">
-              <a href="${pageContext.request.contextPath}/movie/detail/${b.rowNum}" class="wrap-poster">
+              <a href="${pageContext.request.contextPath}/movie/detail/${b.movieId}" class="wrap-poster">
                 <img src="${b.poster}" alt=""/>
               </a>
 	            <span class="box-rank">${b.rank}</span>
@@ -58,7 +58,7 @@ pageEncoding="UTF-8"%>
       </div>
     </div>
 
-    <!-- Swiper Populariy List -->
+<%--     <!-- Swiper Populariy List -->
     <div class="swiper mySwiper">
       <div class="swiper-button swiper-button-next"></div>
       <div class="swiper-button swiper-button-prev"></div>
@@ -73,7 +73,7 @@ pageEncoding="UTF-8"%>
             </div>
           </c:forEach> 
       </div>
-    </div>
+    </div> --%>
 
         
         <%@ include file="../include/footer.jsp"  %>

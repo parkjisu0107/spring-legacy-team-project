@@ -116,13 +116,15 @@ public class MovieService {
 	// KMDB) 영화 정보 JSON data 불러오기
 	public JSONObject getApiData(String title, String openDt) {
 		
-		String createYear = openDt.substring(0, 4);
+		String createYearEnd = openDt.substring(0, 4);
+		String createYearStart = Integer.parseInt(createYearEnd) - 1 + "";
 		
 		UriComponents builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
 				.queryParam("ServiceKey", serviceKey)
-				.queryParam("releaseDts", openDt)
-				.queryParam("createDte", openDt)
 				.queryParam("title", title)
+				.queryParam("releaseDts", openDt)
+				.queryParam("createDts", createYearStart)
+				.queryParam("createDte", createYearEnd)
 				.build();
 		
 		log.info(builder.toString());
@@ -148,7 +150,7 @@ public class MovieService {
 						.queryParam("ServiceKey", serviceKey)
 						.queryParam("title", title)
 						.queryParam("type", "극영화")
-						.queryParam("createDte", createYear)
+						.queryParam("createDte", createYearEnd)
 						.build();
 		    	
 		    	log.info(builder.toString());

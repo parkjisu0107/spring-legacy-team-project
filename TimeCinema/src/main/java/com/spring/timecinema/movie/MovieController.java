@@ -46,7 +46,7 @@ public class MovieController {
 		
 		return "movie/detail";
 	}
-//	
+	
 //	@GetMapping("/search/{query}")
 //	public void search(@PathVariable String query) {
 //

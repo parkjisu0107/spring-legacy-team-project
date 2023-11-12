@@ -277,7 +277,7 @@ public class MovieService {
 		
 	}
 
-	// TMDB
+	// TMDB PopularList
 	public List<Time> getPopularityList(int yearFrom, int yearTo) {
 		
 		String dateFrom = yearFrom + "-01-01";
@@ -343,16 +343,59 @@ public class MovieService {
 	    return dtoList;
 	}
 
-	public void getResultList(String query) {
-
-		UriComponents builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
-													.queryParam("ServiceKey", serviceKey)
-													.queryParam("query", query)
-													.build();
-
-		
-		
-	}
+//	public void getResultList(String query) {
+//
+//		UriComponents builder = UriComponentsBuilder.fromHttpUrl(tmdbUrl)
+//				.queryParam("include_adult", "true")
+//				.queryParam("language", "ko")
+//				.queryParam("page", "1")
+//				.queryParam("region", "KR")
+//				.queryParam("sort_by", "popularity.desc")
+//				.build();
+//		
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.add("Authorization", authKey);
+//		headers.add("accept", "application/json");
+//		
+//		RestTemplate template = new RestTemplate();
+//		HttpEntity<Object> requEntity = new HttpEntity<>(headers);
+//		
+//		ResponseEntity<String> responseEntity 
+//		= template.exchange(builder.toUriString(), HttpMethod.GET, requEntity, String.class);
+//		
+//		List<Time> dtoList = new ArrayList<>();
+//		
+//		String responseData = responseEntity.getBody();
+//	    JSONParser parser = new JSONParser();
+//	    try {
+//			JSONObject jsonObject = (JSONObject) parser.parse(responseData);
+//		    JSONArray resultsArray = (JSONArray) jsonObject.get("results");
+//		    
+//		    int rank = 1;
+//		    for(Object result : resultsArray) {
+//		    	String title = (String) ((JSONObject) result).get("title");
+////		    	String originalTitle = (String) ((JSONObject) result).get("original_title");
+//		    	String poster = "https://image.tmdb.org/t/p/w300" + (String) ((JSONObject) result).get("poster_path");
+//		    	String openDt = (String) ((JSONObject) result).get("release_date");
+//		    	openDt = openDt.replaceAll("-", ".");
+//				
+//				dtoList.add(Time.builder()
+//								.rank(rank)
+//								.title(title)
+//								.openDt(openDt)
+//								.poster(poster)
+//								.build());
+//
+//		    	rank++;
+//		    }
+//		    
+//		    
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		
+//	}
 
 	// 상세보기 정보 요청
 	public ApiResultTotal getDetail(String movieId) {

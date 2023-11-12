@@ -21,6 +21,220 @@
 
 <title></title>
 
+<style>
+
+body {
+	background-color: black;
+	color: white;
+}
+
+
+.detail {
+            display: block;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 100px;
+        }
+textarea {
+	width: 640px;
+	background-color: black;
+	color: white;
+	margin-bottom: 30px;
+}
+
+main {
+	margin-bottom: 100px;
+}
+
+/* ----------------------줄거리 더보기 줄이기--------------------------- */
+.text-wrapper {
+	/* 임의의 넓이 설정 (200px이 넘어갈 경우 텍스트 줄바꿈) */
+	width: 650px;
+}
+
+.text {
+	/* 요소의 내용이 영역을 벗어날 경우 그 부분은 숨겨지게 처리 */
+	overflow: hidden;
+	/* 요소의 표시 방법을 -webkit-box로 표시 */
+	display: -webkit-box;
+	/* webkit-box로 표시된 자식 요소들의 배치 방법 결정 (여기서는 수직) */
+	-webkit-box-orient: vertical;
+	/* 요소 내 텍스트를 지정한 라인수까지만 표시 */
+	-webkit-line-clamp: 2;
+	/* 텍스트 양쪽정렬 */
+	text-align: justify;
+}
+
+.more-text {
+	/* 글씨 크기,색상 지정 */
+	font-size: 16px;
+	color: red;
+	/* 마우스 포인트가 올라갔을 때 커서 모양을 포인터로 변경 */
+	cursor: pointer;
+}
+
+.less-text {
+	/* 글씨 크기,색상 지정 */
+	font-size: 16px;
+	color: red;
+	/* 마우스 포인트가 올라갔을 때 커서 모양을 포인터로 변경 */
+	cursor: pointer;
+	/* 줄이기 버튼 (처음에는 안보이게) */
+	display: none;
+}
+
+/* --------------------줄거리 더보기 줄이기 끝-------------------- */
+
+/* 영화 디테일 */
+.box_basic {
+	position: relative;
+	padding: 70px 0 60px 0;
+}
+
+.info_detail {
+	position: relative;
+	margin-left: 250px;
+	margin-right: 250px;
+}
+
+.info_poster {
+	float: left;
+	width: 210px;
+	height: 308px;
+	margin-right: 40px;
+}
+
+.info_poster img {
+	border-radius: 5px;
+}
+
+.detail_cont {
+	display: flex;
+	padding: 20px 0 48px;
+	align-items: flex-start;
+}
+
+.inner_cont {
+	display: table;
+	max-width: 60%;
+}
+
+.list_cont {
+	letter-spacing: -0.06em;
+	display: flex;
+	line-height: 27px;
+}
+
+.list_cont dt {
+	max-width: 100px;
+	padding-right: 20px;
+	font-weight: normal;
+	color: #98989C;
+	white-space: nowrap;
+}
+
+.list_cont dd {
+	color: #fff;
+	word-break: break-all;
+	word-wrap: break-word;
+}
+
+/* 틀 */
+.detail {
+	display: block;
+	padding-left: 250px;
+	text-align: left;
+	margin-top: 100px;
+}
+
+.content {
+	text-align: left;
+	margin: 100px 600px 130px 0;
+}
+
+.stillcut {
+
+	margin: 0 250px 100px 250px;
+}
+
+#reply {
+	margin: 100px 250px 100px 250px;
+}
+
+.container {
+	margin: 100px 250px 0 250px;
+}
+
+.categorize {
+	margin-bottom: 30px;
+	border-bottom: 2px solid grey;
+	padding-left: 10px;
+	padding-bottom: 3px;
+}
+
+.ic2 {
+	margin-left: 30px;
+}
+
+/* 스틸컷 */
+li {
+	list-style: none;
+}
+
+.flex {
+	display: flex;
+}
+
+.flex li img {
+	width: 300px;
+	height: 200px;
+}
+
+.slide_wrapper {
+	position: relative;
+	width: 990px;
+	height: 170px;
+	overflow: hidden
+}
+
+.slides {
+	position: absolute;
+	left: 0;
+	top: 0;
+	transition: left 0.5s ease-out;
+}
+
+.slides li:not(:last-child) {
+	justify-content: flex-start;
+	margin-right: 15px;
+	margin-left: 15px;
+}
+
+.controls {
+	text-align: center;
+}
+
+.controls span {
+	z-index: 2;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.controls>.prev {
+	right: calc(100% - 40px);
+}
+
+.controls>.next {
+	left: calc(100% - 40px);
+}
+
+/* 리뷰 */
+#reply p {
+	border: 1px solid white;
+}
+
+</style>
 </head>
 
 <body>
@@ -82,7 +296,7 @@
 
 		</div>
 
-		<div class="plot">
+		<div class="content">
 			<div class="categorize">
 				<h4>줄거리</h4>
 			</div>
@@ -118,36 +332,34 @@
 	</div>
 
 
-	<div id="reply">
+    <div id="reply">
 		<div class="categorize">
 			<h4>리뷰</h4>
 		</div>
-		<c:if test="${In == null}">
-			<p>
-				댓글을 작성하려면 로그인 해주세요. <a
-					href="${pageContext.request.contextPath}/user/userIn">Login</a>
-			</p>
-		</c:if>
-		<c:if test="${In != null}">
-			<section class="replyForm">
-				<form method="post"
-					action="${pageContext.request.contextPath}/reply/detail">
-					<div class="input_area">
-						<input type="hidden" value="${reply.regDate}" /> <input
-							type="hidden" value="${reply.replyNo}" /> <input type="hidden"
-							name="userId" value="${In}"> <input type="hidden"
-							name="rowNum" value="${detail.rowNum}" />
-						<textarea name="content" id="content" placeholder="내용을 입력하세요."></textarea>
-					</div>
-					<div class="input_area">
-						<button type="submit" id="reply_btn">등록</button>
-					</div>
-				</form>
-			</section>
-		</c:if>
-		<div class="getList"></div>
-	</div>
+      <c:if test="${In == null}">
+        <p>댓글 입력하려면 로그인을 하렴 *^^* </p>
+      </c:if>
+      <c:if test="${In != null}">
+      <section class="replyForm">
+          <form method="post" action="${pageContext.request.contextPath}/reply/detail">
+            <div class="input_area">
+              <input type="hidden"  value="${reply.regDate}" />
+              <input type="hidden" value="${reply.replyNo}" />
+              <input type="hidden" name="userId" value="${In}" >
+              <input type="hidden" name="rowNum" value="${detail.rowNum}" />
+              <textarea name="content" id="content"></textarea>
+            </div>
+            <div class="input_area">
+              <button type="submit" id="reply_btn">리뷰 남기기♥</button>
+            </div>
+          </form>
+        </section>
+      </c:if>
+      <div class="getList">
 
+    </div>
+    </div>
+	
 </body>
 <%@ include file="../include/footer.jsp"%>
 <script>
@@ -177,14 +389,11 @@ window.onload = function() {
               const commentDiv = document.createElement('div');
               commentDiv.className = 'comment';
               commentDiv.innerHTML = `
-              <div class="replydiv">
-              <div>
-              	<span class="rname">\${reply.userName}</span><span> (\${reply.userId})</span>
-              </div>
-              <div>\${reply.content}</div>
-              <div class="rdate">\${formattedDate}</div>
-              </div>
-
+              <p>\${reply.content}</p>
+              <p>\${reply.userId}</p>
+              <p>\${formattedDate}</p>
+              <p>\${reply.replyNo}</p>
+              <p>\${reply.userName}</p>
               `;
               
               getList.appendChild(commentDiv);
@@ -263,6 +472,6 @@ window.onload = function() {
 
 
 
-
+			
 
 </html>

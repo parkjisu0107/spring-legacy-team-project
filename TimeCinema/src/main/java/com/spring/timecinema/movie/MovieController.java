@@ -41,7 +41,9 @@ public class MovieController {
 	// movie detail 페이지 요청 (popularList)
 	@GetMapping("/detail/{title}/{openDt}")
 	public String popularDetail(@PathVariable String title, @PathVariable String openDt, Model model) {
-	
+		
+		log.info(service.getPopularDetail(title, openDt).toString());
+		
 		model.addAttribute("detail", service.getPopularDetail(title, openDt));
 		
 		return "movie/detail";

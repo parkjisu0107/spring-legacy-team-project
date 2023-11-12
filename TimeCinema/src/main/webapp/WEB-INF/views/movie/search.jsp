@@ -7,20 +7,16 @@
 <head>
 <meta charset="UTF-8">
 <title>Search</title>
+<link
+rel="stylesheet"
+href="${pageContext.request.contextPath}/css/search.css"
+/>
 </head>
-<body>
-<body>
-    <link
-      rel="stylesheet"
-      href="${pageContext.request.contextPath}/css/search.css"
-    />
-</head>
-<body>
 <body>
 
+    <div class="keyword">키워드: ${query}</div>
 
     <ul class="search">
-		<div class="keyword">키워드: ${query}</div>
         <c:forEach var="r" items="${result}">
         <li class="box_basic">
             <div class="item_related">
@@ -60,6 +56,6 @@
             </div>
         </li>
     </ul>
+    <%@ include file="../include/footer.jsp"%>
 </body>
-<%@ include file="../include/footer.jsp"%>
 </html>

@@ -51,6 +51,7 @@
      -->
     <mybatis-spring:scan base-package="com.spring.timecinema.movie"/>
     <mybatis-spring:scan base-package="com.spring.timecinema.user"/>
+    <mybatis-spring:scan base-package="com.spring.timecinema.reply"/>
     
 	
 </beans>

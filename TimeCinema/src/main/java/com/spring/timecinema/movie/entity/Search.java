@@ -26,5 +26,6 @@ public class Search {
 	private String genre;
 	private String type;
 	private String prodYear;
+	private String openDt;
 	
 }

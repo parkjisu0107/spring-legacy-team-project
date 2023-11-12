@@ -433,9 +433,13 @@ public class MovieService {
 			    // type
 			    String type = (String) ((JSONObject) result).get("type");
 		    	
+			    // type
+			    String openDt = (String) ((JSONObject) result).get("repRatDate");
+			    
 			    list.add(Search.builder()
 							    .genre(genre)
 							    .movieId(movieId)
+							    .openDt(openDt)
 							    .poster(poster)
 							    .prodYear(prodYear)
 							    .rating(rating)

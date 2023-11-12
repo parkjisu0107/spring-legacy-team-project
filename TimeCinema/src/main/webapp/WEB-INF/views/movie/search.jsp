@@ -24,37 +24,38 @@
         <c:forEach var="r" items="${result}">
         <li class="box_basic">
             <div class="item_related">
-
-                <div class="info_poster">
-                    <img src="${r.poster}" />
-                </div>
-                <div class="info_detail">
-
-                    <div class="detail_tit">
-                        <h3>${r.title}</h3>
-                        <h5>${r.titleEng}</h5>
+                <a href="${pageContext.request.contextPath}/movie/detail/${r.title}/${r.openDt}">
+                    <div class="info_poster">
+                        <img src="${r.poster}" />
                     </div>
+                    <div class="info_detail">
 
-                    <div class="inner_cont">
-                        <dl class="list_cont">
-                            <dt>제작</dt>
-                            <dd>${r.prodYear}</dd>
-                        </dl>
-                        <dl class="list_cont">
-                            <dt>장르</dt>
-                            <dd>${r.type}/ ${r.genre}</dd>
-                        </dl>
-                        <dl class="list_cont">
-                            <dt>등급</dt>
-                            <dd>${r.rating}</dd>
-                        </dl>
-                        <dl class="list_cont">
-                            <dt>러닝타임</dt>
-                            <dd>${r.runtime}분</dd>
-                        </dl>
+                        <div class="detail_tit">
+                            <h3>${r.title}</h3>
+                            <h5>${r.titleEng}</h5>
+                        </div>
+
+                        <div class="inner_cont">
+                            <dl class="list_cont">
+                                <dt>제작</dt>
+                                <dd>${r.prodYear}</dd>
+                            </dl>
+                            <dl class="list_cont">
+                                <dt>장르</dt>
+                                <dd>${r.type}/ ${r.genre}</dd>
+                            </dl>
+                            <dl class="list_cont">
+                                <dt>등급</dt>
+                                <dd>${r.rating}</dd>
+                            </dl>
+                            <dl class="list_cont">
+                                <dt>러닝타임</dt>
+                                <dd>${r.runtime}분</dd>
+                            </dl>
+                        </div>
+
                     </div>
-
-                </div>
+                </a>
                 </c:forEach>
             </div>
         </li>

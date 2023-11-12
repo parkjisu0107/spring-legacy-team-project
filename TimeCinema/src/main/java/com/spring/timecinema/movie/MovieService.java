@@ -182,15 +182,12 @@ public class MovieService {
 		    // posters > poster
 		    String posters = (String) result.get("posters");
 		    String poster = posters.split("\\|")[0];
-		    log.info("poster: {}", poster);
 		    
 		    // movieId
 		    String movieId = (String) result.get("DOCID");
-			log.info("movieId: {}", movieId);
 		    
 		    // titleEng
 		    String titleEng = (String) result.get("titleEng");
-		    log.info("titleEng: {}", titleEng);
 		    
 		    // directors > director > directorNm
 		    JSONObject directors = (JSONObject) result.get("directors");
@@ -204,11 +201,12 @@ public class MovieService {
 		    // 5명 리스트로
 		    List<String> actorList = new ArrayList<>();
 		    for(int i=0; i<5; i++) {
-		    	if(i > actorList.size()-1) break;
+		    	if(actorArray.size() == i) break;
 		    	JSONObject actor = (JSONObject) actorArray.get(i);
 		    	String actorNm = (String) actor.get("actorNm");
 		    	actorList.add(actorNm);
 		    }
+		    log.info(actorList.toString());
 		    
 		    // nation
 		    String nation = (String) ((JSONObject) result).get("nation");
@@ -250,20 +248,22 @@ public class MovieService {
 		    String vodUrl = (String) vod.get("vodUrl");
 		    
 		    return ApiResultTotal.builder()
+					    		.actorList(actorList)
+					    		.company(company)
+					    		.directorNm(directorNm)
+					    		.genre(genre)
+					    		.keywords(keywords)
 		    					.movieId(movieId)
+		    					.nation(nation)
+		    					.openDt(reqOpenDt)
+		    					.plotText(plotText)
 		    					.poster(poster)
+		    					.rating(rating)
+		    					.runtime(runtime)
+		    					.stllList(stllList)
+		    					.title(reqTitle)
 							    .titleEng(titleEng)
-							    .directorNm(directorNm)
-							    .actorList(actorList)
-							    .nation(nation)
-							    .company(company)
-							    .plotText(plotText)
-							    .runtime(runtime)
-							    .rating(rating)
-							    .genre(genre)
 							    .type(type)
-							    .keywords(keywords)
-							    .stllList(stllList)
 							    .vodClass(vodClass)
 							    .vodUrl(vodUrl)
 							    .build();
@@ -353,6 +353,29 @@ public class MovieService {
 		
 		
 	}
+
+	// 상세보기 정보 요청
+	public ApiResultTotal getDetail(String movieId) {
+
+		Movie movie = getMovie(movieId);
+		return getApiInfo(movie.getTitle(), movie.getOpenDt());
+		
+	}
+
+	public ApiResultTotal getPopularDetail(String title, String openDt) {
+
+		String movieId = getMovieId(title, openDt);
+		
+		// 없으면 KMDB에서 검색 후 Movie DB에 저장
+		if(movieId == null) {
+			setMovie(title, openDt);
+		}
+					
+		movieId = getMovieId(title, openDt);
+		
+		return getDetail(movieId);
+	}
+
 	
 	
 }

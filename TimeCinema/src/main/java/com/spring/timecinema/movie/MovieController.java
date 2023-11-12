@@ -1,15 +1,11 @@
 package com.spring.timecinema.movie;
 
-import java.util.List;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.spring.timecinema.movie.dto.BoxResponseDto;
-import com.spring.timecinema.movie.dto.DetailResponseDto;
 import com.spring.timecinema.movie.entity.Era;
 
 import lombok.RequiredArgsConstructor;
@@ -27,28 +23,29 @@ public class MovieController {
 	@GetMapping("/{era}")
 	public String time(@PathVariable String era,Model model) {
 		Era targetEra = new Era(era);
-		model.addAttribute("pop", service.getPopularityList(targetEra.getYearFrom(), targetEra.getYearTo()));
 		model.addAttribute("box", service.getBoxOfficeList(targetEra.getYearFrom()));
+		model.addAttribute("pop", service.getPopularityList(targetEra.getYearFrom(), targetEra.getYearTo()));
 		model.addAttribute("era", targetEra);
 		return "movie/time";
 	}
 
-//	// movie detail 페이지 요청 (boxOffice)
-//	@GetMapping("/detail/{rowNum}")
-//	public String boxOfficeDetail(@PathVariable int rowNum, Model model) {
-//		
-//		BoxResponseDto box = service.getBoxInfo(rowNum);
-//		DetailResponseDto dto = service.getMovieDetail(box.getOpenDt(), box.getTitle());
-//		
-//		dto.setRowNum(box.getRowNum());
-//		dto.setTitle(box.getTitle());
-//		dto.setOpenDt(box.getOpenDt());
-//		dto.setPoster(box.getPoster());
-//		
-//		model.addAttribute("detail", dto);
-//		
-//		return "movie/detail";
-//	}
+	// movie detail 페이지 요청 (boxOffice)
+	@GetMapping("/detail/{movieId}")
+	public String boxOfficeDetail(@PathVariable String movieId, Model model) {
+
+		model.addAttribute("detail", service.getDetail(movieId));
+		
+		return "movie/detail";
+	}
+	
+	// movie detail 페이지 요청 (popularList)
+	@GetMapping("/detail/{title}/{openDt}")
+	public String popularDetail(@PathVariable String title, @PathVariable String openDt, Model model) {
+	
+		model.addAttribute("detail", service.getPopularDetail(title, openDt));
+		
+		return "movie/detail";
+	}
 //	
 //	@GetMapping("/search/{query}")
 //	public void search(@PathVariable String query) {

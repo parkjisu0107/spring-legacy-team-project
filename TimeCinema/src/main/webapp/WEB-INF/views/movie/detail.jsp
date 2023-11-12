@@ -63,7 +63,11 @@
 						</dl>
 						<dl class="list_cont">
 							<dt>출연진</dt>
-							<dd>${detail.actorList}</dd>
+							<dd>
+								<c:forEach var="actor" items="${detail.actorList}">
+									${actor}
+								</c:forEach>
+							</dd>
 						</dl>
 						<dl class="list_cont">
 							<dt>제작사</dt>

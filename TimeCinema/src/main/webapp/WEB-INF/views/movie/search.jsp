@@ -7,6 +7,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Search</title>
+</head>
+<body>
+<body>
     <link
       rel="stylesheet"
       href="${pageContext.request.contextPath}/css/search.css"
@@ -14,12 +17,15 @@
 </head>
 <body>
 <body>
+
+
     <ul class="search">
-        <div class="keyword">키워드: ${query}</div>
+		<div class="keyword">키워드: ${query}</div>
+        <c:forEach var="r" items="${result}">
         <li class="box_basic">
             <div class="item_related">
-            	<c:forEach var="r" items="${result}">
-            	<div class="info_poster">
+
+                <div class="info_poster">
                     <img src="${r.poster}" />
                 </div>
                 <div class="info_detail">
@@ -44,12 +50,12 @@
                         </dl>
                         <dl class="list_cont">
                             <dt>러닝타임</dt>
-                            <dd>${r.runtime}</dd>
+                            <dd>${r.runtime}분</dd>
                         </dl>
                     </div>
 
                 </div>
-            	</c:forEach>
+                </c:forEach>
             </div>
         </li>
     </ul>

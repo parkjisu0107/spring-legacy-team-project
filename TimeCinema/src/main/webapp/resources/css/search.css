@@ -51,10 +51,12 @@ body {
 
 .detail_tit {
     color: #fff;
+    padding-top: 15px;
 }
 
 .inner_cont {
     overflow: hidden;
+    padding-top: 25px;
 }
 
 .list_cont {

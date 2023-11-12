@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -405,6 +406,7 @@ public class MovieService {
 		    	 // posters > poster
 			    String posters = (String) result.get("posters");
 			    String poster = posters.split("\\|")[0];
+			    if(poster.length() < 1) continue;
 			    
 			    // movieId
 			    String movieId = (String) result.get("DOCID");
@@ -414,11 +416,7 @@ public class MovieService {
 			   
 			    // title
 			    String title = (String) result.get("title");
-//			    log.info("title1: {}", title);
-////			    title.replaceAll([/!HS/g], "");
-//			    title.replace("/!HE/g", "");
-//			    title.replace("/", "");
-//			    log.info("title2: {}", title);
+			    title = title.replace("!HS ", "").replace("!HE ", "");
 			    
 			    // prodYear
 			    String prodYear = (String) ((JSONObject) result).get("prodYear");
@@ -454,6 +452,7 @@ public class MovieService {
 		}
 		
 		return list;
+		
 		
 	}
 	

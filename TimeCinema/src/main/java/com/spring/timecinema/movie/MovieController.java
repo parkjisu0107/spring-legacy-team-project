@@ -47,11 +47,14 @@ public class MovieController {
 		return "movie/detail";
 	}
 	
-//	@GetMapping("/search/{query}")
-//	public void search(@PathVariable String query) {
-//
-//		service.getResultList(query);
-//		
-//	}
+	@GetMapping("/search/{query}")
+	public String search(@PathVariable String query, Model model) {
+
+		model.addAttribute("query", query);
+		model.addAttribute("result", service.getResultList(query));
+		
+		return "movie/search";
+		
+	}
 	
 }

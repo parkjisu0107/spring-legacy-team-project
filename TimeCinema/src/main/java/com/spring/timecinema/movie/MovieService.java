@@ -23,6 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.spring.timecinema.movie.dto.TimeResponseDTO;
 import com.spring.timecinema.movie.entity.ApiResultTotal;
 import com.spring.timecinema.movie.entity.Movie;
+import com.spring.timecinema.movie.entity.Search;
 import com.spring.timecinema.movie.entity.Time;
 
 import lombok.RequiredArgsConstructor;
@@ -343,59 +344,6 @@ public class MovieService {
 	    return dtoList;
 	}
 
-//	public void getResultList(String query) {
-//
-//		UriComponents builder = UriComponentsBuilder.fromHttpUrl(tmdbUrl)
-//				.queryParam("include_adult", "true")
-//				.queryParam("language", "ko")
-//				.queryParam("page", "1")
-//				.queryParam("region", "KR")
-//				.queryParam("sort_by", "popularity.desc")
-//				.build();
-//		
-//		HttpHeaders headers = new HttpHeaders();
-//		headers.add("Authorization", authKey);
-//		headers.add("accept", "application/json");
-//		
-//		RestTemplate template = new RestTemplate();
-//		HttpEntity<Object> requEntity = new HttpEntity<>(headers);
-//		
-//		ResponseEntity<String> responseEntity 
-//		= template.exchange(builder.toUriString(), HttpMethod.GET, requEntity, String.class);
-//		
-//		List<Time> dtoList = new ArrayList<>();
-//		
-//		String responseData = responseEntity.getBody();
-//	    JSONParser parser = new JSONParser();
-//	    try {
-//			JSONObject jsonObject = (JSONObject) parser.parse(responseData);
-//		    JSONArray resultsArray = (JSONArray) jsonObject.get("results");
-//		    
-//		    int rank = 1;
-//		    for(Object result : resultsArray) {
-//		    	String title = (String) ((JSONObject) result).get("title");
-////		    	String originalTitle = (String) ((JSONObject) result).get("original_title");
-//		    	String poster = "https://image.tmdb.org/t/p/w300" + (String) ((JSONObject) result).get("poster_path");
-//		    	String openDt = (String) ((JSONObject) result).get("release_date");
-//		    	openDt = openDt.replaceAll("-", ".");
-//				
-//				dtoList.add(Time.builder()
-//								.rank(rank)
-//								.title(title)
-//								.openDt(openDt)
-//								.poster(poster)
-//								.build());
-//
-//		    	rank++;
-//		    }
-//		    
-//		    
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		
-//		
-//	}
 
 	// 상세보기 정보 요청
 	public ApiResultTotal getDetail(String movieId) {
@@ -419,6 +367,95 @@ public class MovieService {
 		return getDetail(movieId);
 	}
 
+	public List<Search> getResultList(String query) {
+		
+		UriComponents builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
+				.queryParam("ServiceKey", serviceKey)
+				.queryParam("query", query)
+				.queryParam("type", "극영화")
+				.build();
+		
+		log.info(builder.toString());
+
+		HttpHeaders headers = new HttpHeaders();
+		
+		RestTemplate template = new RestTemplate();
+		HttpEntity<Object> requEntity = new HttpEntity<>(headers);
+		
+	    List<Search> list = new ArrayList<>();
+		
+		try {
+			ResponseEntity<String> responseEntity 
+			= template.exchange(builder.toUriString(), HttpMethod.GET, requEntity, String.class);
+		
+			String responseData = responseEntity.getBody();
+		    JSONParser parser = new JSONParser();
+		    JSONObject jsonObject = (JSONObject) parser.parse(responseData);
+		    
+		    JSONArray dataArray = (JSONArray) jsonObject.get("Data");
+		    JSONObject data = (JSONObject) dataArray.get(0);
+		    
+		    JSONArray resultArray = (JSONArray) data.get("Result");
+		    
+		    
+		    for(Object r : resultArray) {
+		    	
+		    	JSONObject result = (JSONObject) r;
+		    	
+		    	 // posters > poster
+			    String posters = (String) result.get("posters");
+			    String poster = posters.split("\\|")[0];
+			    
+			    // movieId
+			    String movieId = (String) result.get("DOCID");
+			    
+			    // titleEng
+			    String titleEng = (String) result.get("titleEng");
+			   
+			    // title
+			    String title = (String) result.get("title");
+//			    log.info("title1: {}", title);
+////			    title.replaceAll([/!HS/g], "");
+//			    title.replace("/!HE/g", "");
+//			    title.replace("/", "");
+//			    log.info("title2: {}", title);
+			    
+			    // prodYear
+			    String prodYear = (String) ((JSONObject) result).get("prodYear");
+			    
+			    // runtime
+			    String runtime = (String) ((JSONObject) result).get("runtime");
+			    
+			    // rating
+			    String rating = (String) ((JSONObject) result).get("rating");
+			    
+			    // genre
+			    String genre = (String) ((JSONObject) result).get("genre");
+			    
+			    // type
+			    String type = (String) ((JSONObject) result).get("type");
+		    	
+			    list.add(Search.builder()
+							    .genre(genre)
+							    .movieId(movieId)
+							    .poster(poster)
+							    .prodYear(prodYear)
+							    .rating(rating)
+							    .runtime(runtime)
+							    .title(title)
+							    .titleEng(titleEng)
+							    .type(type)
+							    .build());
+			    
+		    }
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+		
+	}
 	
 	
 }

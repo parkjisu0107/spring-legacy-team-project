@@ -46,6 +46,11 @@
 		    VALUES (#{movieId}, #{title}, #{openDt}, #{poster})
 	</update>
 
+	<update id="setPoster">
+		UPDATE movie
+		SET poster = #{poster}
+		WHERE movie_id = #{movieId}
+	</update>
 
 <!-- <select id="getBoxInfo" resultType="box">
 	SELECT

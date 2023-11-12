@@ -18,6 +18,8 @@ public interface IMovieMapper {
 
 	void setMovie(Movie movie);
 
+	void setPoster(@Param("movieId") String movieId, @Param("poster") String poster);
+
 //	void setPoster(@Param("rowNum")int rowNum, @Param("poster") String poster);
 //
 //	Time getBoxInfo(int rowNum);

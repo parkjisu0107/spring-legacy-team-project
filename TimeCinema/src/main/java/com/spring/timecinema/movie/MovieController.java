@@ -27,8 +27,8 @@ public class MovieController {
 	@GetMapping("/{era}")
 	public String time(@PathVariable String era,Model model) {
 		Era targetEra = new Era(era);
+		model.addAttribute("pop", service.getPopularityList(targetEra.getYearFrom(), targetEra.getYearTo()));
 		model.addAttribute("box", service.getBoxOfficeList(targetEra.getYearFrom()));
-//		model.addAttribute("pop", service.getPopularityList(targetEra.getYearFrom(), targetEra.getYearTo()));
 		model.addAttribute("era", targetEra);
 		return "movie/time";
 	}

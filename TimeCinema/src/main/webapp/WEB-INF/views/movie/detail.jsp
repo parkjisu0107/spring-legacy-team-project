@@ -125,7 +125,7 @@
 		<c:if test="${In == null}">
 			<p>
 				댓글을 작성하려면 로그인 해주세요. <a
-					href="${pageContext.request.contextPath}/user/userIn">Login</a>
+					href="${pageContext.request.contextPath}/user/userIn">Login 바로가기</a>
 			</p>
 		</c:if>
 		<c:if test="${In != null}">

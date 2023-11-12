@@ -64,17 +64,20 @@
 							<dt>감독</dt>
 							<dd>${detail.directorNm}</dd>
 						</dl>
-						<dl class="list_cont">
-							<dt>출연진</dt>
-							<dd>${detail.actorList}</dd>
-						</dl>
+
+						<ul class="list_cont">
+							<li>출연진</li>
+							<c:forEach var="actor" items="${detail.actorList}">
+								<li>${actor}</li>
+							</c:forEach>
+						</ul>
 						<dl class="list_cont">
 							<dt>제작사</dt>
 							<dd>${detail.company}</dd>
 						</dl>
 						<dl class="list_cont">
-							<dt>키워드</dt>
-							<dd># ${detail.keywords}</dd>
+							<dt>키워드</dt> 
+							<dd>${detail.keywords}</dd>
 						</dl>
 					</div>
 				</div>
@@ -125,7 +128,8 @@
 		<c:if test="${In == null}">
 			<p>
 				댓글을 작성하려면 로그인 해주세요. <a
-					href="${pageContext.request.contextPath}/user/userIn">Login 바로가기</a>
+					href="${pageContext.request.contextPath}/user/userIn">Login
+					바로가기</a>
 			</p>
 		</c:if>
 		<c:if test="${In != null}">

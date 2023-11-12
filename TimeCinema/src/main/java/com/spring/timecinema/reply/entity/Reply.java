@@ -18,7 +18,11 @@ import lombok.ToString;
 public class Reply {
     
     //영화 번호
+<<<<<<< HEAD
     private int rowNum;
+=======
+    private String movieId;
+>>>>>>> 6c995e625d287d7f89b90edd1f4714102b39054f
     //아이디
     private String userId;
     //댓글 번호

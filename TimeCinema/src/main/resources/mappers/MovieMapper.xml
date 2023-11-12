@@ -5,35 +5,54 @@
 <mapper namespace="com.spring.timecinema.movie.IMovieMapper">
 
 
-<select id="getBoxOfficeList" resultType="box">
-	<![CDATA[
-	SELECT * FROM
-	(
-	    SELECT ROWNUM AS rank, tbl.*
-	    FROM(
-	        SELECT 
-	        	REPLACE(title, ' ', '') AS title, 
-	        	REPLACE(open_dt, '-', '') AS open_dt,
-	        	poster,
-	        	row_num
-	        FROM box_office
-	        WHERE SUBSTR(open_dt, 1, 4) >= #{yearFrom}
-		        AND SUBSTR(open_dt, 1, 4) < #{yearFrom} + 10
-		        AND row_num < 30000
-	        ORDER BY viewer DESC
-	    )tbl
-	)
-	WHERE rank>0 AND rank<=20
-	]]>
-</select>
+	<select id="getBoxOfficeList" resultType="time">
+		<![CDATA[
+		SELECT * FROM
+		(
+		    SELECT ROWNUM AS rank, tbl.*
+		    FROM(
+		        SELECT 
+		        	title, 
+	                REPLACE(open_dt, '-', '.') AS open_dt
+		        FROM box_office
+		        WHERE SUBSTR(open_dt, 1, 4) >= #{yearFrom}
+			        AND SUBSTR(open_dt, 1, 4) < #{yearFrom} + 10
+		        ORDER BY viewer DESC
+		    )tbl
+		)
+		WHERE rank>0 AND rank<=20
+		]]>
+	</select>
+	
+	<select id="checkMovie" resultType="string">
+		SELECT movie_id
+		FROM movie
+		WHERE title = #{title}
+			AND open_dt = #{openDt}
+	</select>
+	
+	<select id="getMovie" resultType="movie">
+		SELECT * 
+		FROM movie
+		WHERE movie_id = #{movieId}
+	</select>
+	
+	<update id="setMovie">
+		MERGE INTO movie
+		USING DUAL
+	    	ON (movie_id = #{movieId})
+		WHEN NOT MATCHED THEN
+		    INSERT (movie_id, title, open_dt, poster)
+		    VALUES (#{movieId}, #{title}, #{openDt}, #{poster})
+	</update>
 
-<update id="setPoster">
-	UPDATE box_office
-	SET poster=#{poster}
-	WHERE row_num=#{rowNum}
-</update>
+	<update id="setPoster">
+		UPDATE movie
+		SET poster = #{poster}
+		WHERE movie_id = #{movieId}
+	</update>
 
-<select id="getBoxInfo" resultType="box">
+<!-- <select id="getBoxInfo" resultType="box">
 	SELECT
 		REPLACE(title, ' ', '') AS title, 
 	   	REPLACE(open_dt, '-', '') AS open_dt,
@@ -41,15 +60,8 @@
 	   	row_num
 	FROM box_office
 	WHERE row_num=#{rowNum}
-</select>
+</select> -->
 
-<update id="setMovie">
-	MERGE INTO box_office
-	USING DUAL
-    	ON (row_num = #{rowNum})
-	WHEN NOT MATCHED THEN
-	    INSERT (row_num, title, open_dt, poster)
-	    VALUES (#{rowNum}, #{title}, #{openDt}, #{poster})
-</update>
+
 
 </mapper>

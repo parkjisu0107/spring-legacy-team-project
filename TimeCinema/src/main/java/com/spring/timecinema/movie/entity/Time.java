@@ -13,11 +13,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Movie {
-
+public class Time {
+	private int rank;
 	private String title;
 	private String openDt;
-	private String movieId;
 	private String poster;
-	
 }

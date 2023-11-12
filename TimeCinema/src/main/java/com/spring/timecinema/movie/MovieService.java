@@ -1,14 +1,15 @@
 package com.spring.timecinema.movie;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
@@ -20,9 +21,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.spring.timecinema.movie.dto.BoxResponseDto;
-import com.spring.timecinema.movie.dto.DetailResponseDto;
+import com.spring.timecinema.movie.dto.TimeResponseDTO;
+import com.spring.timecinema.movie.entity.ApiResultTotal;
 import com.spring.timecinema.movie.entity.Movie;
+import com.spring.timecinema.movie.entity.Search;
+import com.spring.timecinema.movie.entity.Time;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,56 +51,82 @@ public class MovieService {
 	private String tmdbUrl;
 
 	// BoxOffice 리스트 불러오기
-	public List<Movie> getBoxOfficeList(int yearFrom) {
+	public List<TimeResponseDTO> getBoxOfficeList(int yearFrom) {
 		
-		List<Movie> list = mapper.getBoxOfficeList(yearFrom);
+		// boxOffice 순위 리스트 title(공백o) openDt(1111.11.11)
+		List<Time> list = mapper.getBoxOfficeList(yearFrom);
 		
-		// 포스터 존재 여부 확인하고 불러오기
-		for(Movie b : list) {
-			if(b.getPoster()==null) {
-				String poster = getPoster(b.getOpenDt(), b.getTitle());
-				int rowNum = b.getRowNum();
-				mapper.setPoster(rowNum, poster);
-				b.setPoster(poster);
-			}
-		}
+		List<TimeResponseDTO> dtoList = new ArrayList<>();
 		
-		return list;
-		
-		
+		// 각 영화가 Movie table에 존재하는지 검색
+		for(Time t : list) {
+			String movieId = getMovieId(t.getTitle(), t.getOpenDt());
 			
+			// 없으면 KMDB에서 검색 후 Movie DB에 저장
+			if(movieId == null) {
+				setMovie(t.getTitle(), t.getOpenDt());
+			}
+						
+			movieId = getMovieId(t.getTitle(), t.getOpenDt());
+			
+			// Movie DB에서 영화 정보 가져오기
+			Movie movie = getMovie(movieId);
+						
+			dtoList.add(TimeResponseDTO.builder()
+										.rank(t.getRank())
+										.title(movie.getTitle())
+										.openDt(movie.getOpenDt())
+										.poster(movie.getPoster())
+										.movieId(movie.getMovieId())
+										.build());
+
+		}// end for
+		
+		return dtoList;		
 	}
 
-	// BoxOffice 포스터 불러오기
-	public String getPoster(String openDt, String title) {
-		
-		JSONObject data = getMovieData(openDt, title);
-		
-	    // data에서 posters 꺼내기
-	    JSONArray resultArray = (JSONArray) data.get("Result");
+	private Movie getMovie(String movieId) {
+		return mapper.getMovie(movieId);
+	}
 
-	    JSONObject result = (JSONObject) resultArray.get(0);
-	    String posters = (String) result.get("posters");
-	    
-	    // posters의 url 중 첫번째 url을 자르기
-	    String poster = posters.split("\\|")[0];
-	    
-	    return poster;
-		    
 
+	private String getMovieId(String title, String openDt) {
+		return mapper.checkMovie(title, openDt);
+	}
+
+	// title 공백 있음, 2023.01.01
+	private void setMovie(String title, String openDt) {
+		
+		String reqTitle = title.replaceAll(" ", "");
+		String reqOpenDt = openDt.replaceAll("\\.", "-");
+		
+		ApiResultTotal info = getApiInfo(reqTitle, reqOpenDt);
+		
+		mapper.setMovie(Movie.builder()
+							.title(title)
+							.movieId(info.getMovieId())
+							.poster(info.getPoster())
+							.openDt(openDt)
+							.build());
+
+		
 	}
 	
 	// KMDB) 영화 정보 JSON data 불러오기
-	public JSONObject getMovieData(String openDt, String title) {
+	public JSONObject getApiData(String title, String openDt) {
 		
-		String createYear = openDt.substring(0, 4);
+		String createYearEnd = openDt.substring(0, 4);
+		String createYearStart = Integer.parseInt(createYearEnd) - 1 + "";
 		
 		UriComponents builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
 				.queryParam("ServiceKey", serviceKey)
-				.queryParam("releaseDts", openDt)
-				.queryParam("releaseDte", openDt)
 				.queryParam("title", title)
+				.queryParam("releaseDts", openDt)
+				.queryParam("createDts", createYearStart)
+				.queryParam("createDte", createYearEnd)
 				.build();
+		
+		log.info(builder.toString());
 
 		HttpHeaders headers = new HttpHeaders();
 		
@@ -119,7 +148,8 @@ public class MovieService {
 		    	builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
 						.queryParam("ServiceKey", serviceKey)
 						.queryParam("title", title)
-						.queryParam("createDte", createYear)
+						.queryParam("type", "극영화")
+						.queryParam("createDte", createYearEnd)
 						.build();
 		    	
 		    	responseEntity 
@@ -129,7 +159,6 @@ public class MovieService {
 		    	jsonObject = (JSONObject) parser.parse(responseData);
 		    }
 		    
-		    //"data" 라는 이름의 키에 해당하는 JSON 데이터를 가져옵니다.
 		    JSONArray dataArray = (JSONArray) jsonObject.get("Data");
 		    data = (JSONObject) dataArray.get(0);
 
@@ -141,107 +170,117 @@ public class MovieService {
 		
 	}
 
-	// KMDB)영화 상세정보 불러오기
-	public DetailResponseDto getMovieDetail(String openDt, String title) {
+	// KMDB) Api data parsing
+	public ApiResultTotal getApiInfo(String reqTitle, String reqOpenDt) {
 		
 		// result 불러오기
-		JSONObject data = getMovieData(openDt, title);
-	    JSONArray resultArray = (JSONArray) data.get("Result");
-	    JSONObject result = (JSONObject) resultArray.get(0);
+		log.info("요청 제목: {}, 개봉일: {}", reqTitle, reqOpenDt);
+		JSONObject data = getApiData(reqTitle, reqOpenDt);
 		
-	    // titleEng
-	    String titleEng = (String) result.get("titleEng");
+	    JSONArray resultArray = (JSONArray) data.get("Result");
+	    try {
+	    	JSONObject result = (JSONObject) resultArray.get(0);
 	    
-	    // directors > director > directorNm
-	    JSONObject directors = (JSONObject) result.get("directors");
-	    JSONArray directorArray = (JSONArray) directors.get("director");
-	    JSONObject director = (JSONObject) directorArray.get(0);
-	    String directorNm = (String) director.get("directorNm");
-	    
-	    // actors > actor > actorNm
-	    JSONObject actors = (JSONObject) result.get("actors");
-	    JSONArray actorArray = (JSONArray) actors.get("actor");
-	    // 5명 리스트로
-	    List<String> actorList = new ArrayList<>();
-	    for(int i=0; i<5; i++) {
-	    	if(i > actorList.size()-1) break;
-	    	JSONObject actor = (JSONObject) actorArray.get(i);
-	    	String actorNm = (String) actor.get("actorNm");
-	    	actorList.add(actorNm);
-	    }
-	    
-	    // nation
-	    String nation = (String) ((JSONObject) result).get("nation");
-	    
-	    // company
-	    String company = (String) ((JSONObject) result).get("company");
-	    
-	    // plots > plot > plotText
-	    JSONObject plots = (JSONObject) result.get("plots");
-	    JSONArray plotArray = (JSONArray) plots.get("plot");
-	    JSONObject plot = (JSONObject) plotArray.get(0);
-	    String plotText = (String) plot.get("plotText");
-	    
-	    // runtime
-	    String runtime = (String) ((JSONObject) result).get("runtime");
-	    
-	    // rating
-	    String rating = (String) ((JSONObject) result).get("rating");
-	    
-	    // genre
-	    String genre = (String) ((JSONObject) result).get("genre");
-	    
-	    // type
-	    String type = (String) ((JSONObject) result).get("type");
-	    
-	    // keywords
-	    String keywords = (String) ((JSONObject) result).get("keywords");
-	    
-	    // stlls
-	    String stlls = (String) ((JSONObject) result).get("stlls");
-	    String[] arr = stlls.split("\\|");
-	    List<String> stllList = Arrays.asList(arr);
-	    
-	    // vods > vod > vodClass, vodUrl
-	    JSONObject vods = (JSONObject) result.get("vods");
-	    JSONArray vodArray = (JSONArray) vods.get("vod");
-	    JSONObject vod = (JSONObject) vodArray.get(0);
-	    String vodClass = (String) vod.get("vodClass");
-	    String vodUrl = (String) vod.get("vodUrl");
-	    
-	    return DetailResponseDto.builder()
+		    // posters > poster
+		    String posters = (String) result.get("posters");
+		    String poster = posters.split("\\|")[0];
+		    
+		    // movieId
+		    String movieId = (String) result.get("DOCID");
+		    
+		    // titleEng
+		    String titleEng = (String) result.get("titleEng");
+		    
+		    // directors > director > directorNm
+		    JSONObject directors = (JSONObject) result.get("directors");
+		    JSONArray directorArray = (JSONArray) directors.get("director");
+		    JSONObject director = (JSONObject) directorArray.get(0);
+		    String directorNm = (String) director.get("directorNm");
+		    
+		    // actors > actor > actorNm
+		    JSONObject actors = (JSONObject) result.get("actors");
+		    JSONArray actorArray = (JSONArray) actors.get("actor");
+		    // 5명 리스트로
+		    List<String> actorList = new ArrayList<>();
+		    for(int i=0; i<5; i++) {
+		    	if(actorArray.size() == i) break;
+		    	JSONObject actor = (JSONObject) actorArray.get(i);
+		    	String actorNm = (String) actor.get("actorNm");
+		    	actorList.add(actorNm);
+		    }
+		    log.info(actorList.toString());
+		    
+		    // nation
+		    String nation = (String) ((JSONObject) result).get("nation");
+		    
+		    // company
+		    String company = (String) ((JSONObject) result).get("company");
+		    
+		    // plots > plot > plotText
+		    JSONObject plots = (JSONObject) result.get("plots");
+		    JSONArray plotArray = (JSONArray) plots.get("plot");
+		    JSONObject plot = (JSONObject) plotArray.get(0);
+		    String plotText = (String) plot.get("plotText");
+		    
+		    // runtime
+		    String runtime = (String) ((JSONObject) result).get("runtime");
+		    
+		    // rating
+		    String rating = (String) ((JSONObject) result).get("rating");
+		    
+		    // genre
+		    String genre = (String) ((JSONObject) result).get("genre");
+		    
+		    // type
+		    String type = (String) ((JSONObject) result).get("type");
+		    
+		    // keywords
+		    String keywords = (String) ((JSONObject) result).get("keywords");
+		    
+		    // stlls
+		    String stlls = (String) ((JSONObject) result).get("stlls");
+		    String[] arr = stlls.split("\\|");
+		    List<String> stllList = Arrays.asList(arr);
+		    
+		    // vods > vod > vodClass, vodUrl
+		    JSONObject vods = (JSONObject) result.get("vods");
+		    JSONArray vodArray = (JSONArray) vods.get("vod");
+		    JSONObject vod = (JSONObject) vodArray.get(0);
+		    String vodClass = (String) vod.get("vodClass");
+		    String vodUrl = (String) vod.get("vodUrl");
+		    
+		    return ApiResultTotal.builder()
+					    		.actorList(actorList)
+					    		.company(company)
+					    		.directorNm(directorNm)
+					    		.genre(genre)
+					    		.keywords(keywords)
+		    					.movieId(movieId)
+		    					.nation(nation)
+		    					.openDt(reqOpenDt)
+		    					.plotText(plotText)
+		    					.poster(poster)
+		    					.rating(rating)
+		    					.runtime(runtime)
+		    					.stllList(stllList)
+		    					.title(reqTitle)
 							    .titleEng(titleEng)
-							    .directorNm(directorNm)
-							    .actorList(actorList)
-							    .nation(nation)
-							    .company(company)
-							    .plotText(plotText)
-							    .runtime(runtime)
-							    .rating(rating)
-							    .genre(genre)
 							    .type(type)
-							    .keywords(keywords)
-							    .stllList(stllList)
 							    .vodClass(vodClass)
 							    .vodUrl(vodUrl)
 							    .build();
-		
+		} catch (Exception e) {
+			log.info("정보를 찾을 수 없음: {}", reqTitle);
+			return ApiResultTotal.builder()
+					.movieId("ERROR")
+					.build();
+		}
+	
 		
 	}
 
-	public BoxResponseDto getBoxInfo(int rowNum) {
-		Movie box = mapper.getBoxInfo(rowNum);
-		
-		return BoxResponseDto.builder()
-							.rowNum(box.getRowNum())
-							.title(box.getTitle())
-							.openDt(box.getOpenDt())
-							.poster(box.getPoster())
-							.build();
-	}
-
-	// TMDB
-	public List<Movie> getPopularityList(int yearFrom, int yearTo) {
+	// TMDB PopularList
+	public List<Time> getPopularityList(int yearFrom, int yearTo) {
 		
 		String dateFrom = yearFrom + "-01-01";
 		String dateTo = yearTo + "-12-31";
@@ -272,7 +311,7 @@ public class MovieService {
 		ResponseEntity<String> responseEntity 
 		= template.exchange(builder.toUriString(), HttpMethod.GET, requEntity, String.class);
 		
-		List<Movie> popularityList = new ArrayList<>();
+		List<Time> dtoList = new ArrayList<>();
 		
 		String responseData = responseEntity.getBody();
 	    JSONParser parser = new JSONParser();
@@ -283,25 +322,142 @@ public class MovieService {
 		    int rank = 1;
 		    for(Object result : resultsArray) {
 		    	String title = (String) ((JSONObject) result).get("title");
-		    	String openDt = (String) ((JSONObject) result).get("release_date");
-		    	Long id = (Long) ((JSONObject) result).get("id");
-		    	int rowNum = Integer.parseInt(String.valueOf(id))+ 10000000;
-		    	openDt = openDt.replaceAll("-", "");
+//		    	String originalTitle = (String) ((JSONObject) result).get("original_title");
 		    	String poster = "https://image.tmdb.org/t/p/w300" + (String) ((JSONObject) result).get("poster_path");
-		    	
-		    	Movie movie = new Movie(rank, rowNum, title, openDt, poster);
-		    	mapper.setMovie(movie);
-		    	
-		    	popularityList.add(movie);
+		    	String openDt = (String) ((JSONObject) result).get("release_date");
+		    	openDt = openDt.replaceAll("-", ".");
+				
+				dtoList.add(Time.builder()
+								.rank(rank)
+								.title(title)
+								.openDt(openDt)
+								.poster(poster)
+								.build());
+
 		    	rank++;
 		    }
 		    
 		    
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-	    return popularityList;
+	    return dtoList;
+	}
+
+
+	// 상세보기 정보 요청
+	public ApiResultTotal getDetail(String movieId) {
+
+		Movie movie = getMovie(movieId);
+		return getApiInfo(movie.getTitle(), movie.getOpenDt());
+		
+	}
+
+	public ApiResultTotal getPopularDetail(String title, String openDt) {
+
+		String movieId = getMovieId(title, openDt);
+		
+		// 없으면 KMDB에서 검색 후 Movie DB에 저장
+		if(movieId == null) {
+			setMovie(title, openDt);
+		}
+					
+		movieId = getMovieId(title, openDt);
+		
+		return getDetail(movieId);
+	}
+
+	public List<Search> getResultList(String query) {
+		
+		UriComponents builder = UriComponentsBuilder.fromHttpUrl(kmdbUrl)
+				.queryParam("ServiceKey", serviceKey)
+				.queryParam("query", query)
+				.queryParam("type", "극영화")
+				.build();
+		
+		log.info(builder.toString());
+
+		HttpHeaders headers = new HttpHeaders();
+		
+		RestTemplate template = new RestTemplate();
+		HttpEntity<Object> requEntity = new HttpEntity<>(headers);
+		
+	    List<Search> list = new ArrayList<>();
+		
+		try {
+			ResponseEntity<String> responseEntity 
+			= template.exchange(builder.toUriString(), HttpMethod.GET, requEntity, String.class);
+		
+			String responseData = responseEntity.getBody();
+		    JSONParser parser = new JSONParser();
+		    JSONObject jsonObject = (JSONObject) parser.parse(responseData);
+		    
+		    JSONArray dataArray = (JSONArray) jsonObject.get("Data");
+		    JSONObject data = (JSONObject) dataArray.get(0);
+		    
+		    JSONArray resultArray = (JSONArray) data.get("Result");
+		    
+		    
+		    for(Object r : resultArray) {
+		    	
+		    	JSONObject result = (JSONObject) r;
+		    	
+		    	 // posters > poster
+			    String posters = (String) result.get("posters");
+			    String poster = posters.split("\\|")[0];
+			    if(poster.length() < 1) continue;
+			    
+			    // movieId
+			    String movieId = (String) result.get("DOCID");
+			    
+			    // titleEng
+			    String titleEng = (String) result.get("titleEng");
+			   
+			    // title
+			    String title = (String) result.get("title");
+			    title = title.replace("!HS ", "").replace("!HE ", "");
+			    
+			    // prodYear
+			    String prodYear = (String) ((JSONObject) result).get("prodYear");
+			    
+			    // runtime
+			    String runtime = (String) ((JSONObject) result).get("runtime");
+			    
+			    // rating
+			    String rating = (String) ((JSONObject) result).get("rating");
+			    
+			    // genre
+			    String genre = (String) ((JSONObject) result).get("genre");
+			    
+			    // type
+			    String type = (String) ((JSONObject) result).get("type");
+		    	
+			    // type
+			    String openDt = (String) ((JSONObject) result).get("repRatDate");
+			    
+			    list.add(Search.builder()
+							    .genre(genre)
+							    .movieId(movieId)
+							    .openDt(openDt)
+							    .poster(poster)
+							    .prodYear(prodYear)
+							    .rating(rating)
+							    .runtime(runtime)
+							    .title(title)
+							    .titleEng(titleEng)
+							    .type(type)
+							    .build());
+			    
+		    }
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+		
+		
 	}
 	
 	

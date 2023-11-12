@@ -64,13 +64,14 @@
 							<dt>감독</dt>
 							<dd>${detail.directorNm}</dd>
 						</dl>
-
-						<ul class="list_cont">
-							<li>출연진</li>
-							<c:forEach var="actor" items="${detail.actorList}">
-								<li>${actor}</li>
-							</c:forEach>
-						</ul>
+						<dl class="list_cont">
+							<dt>출연진</dt>
+							<dd>
+								<c:forEach var="actor" items="${detail.actorList}">
+									${actor}
+								</c:forEach>
+							</dd>
+						</dl>
 						<dl class="list_cont">
 							<dt>제작사</dt>
 							<dd>${detail.company}</dd>
@@ -121,152 +122,151 @@
 	</div>
 
 
-	<div id="reply">
-		<div class="categorize">
-			<h4>리뷰</h4>
-		</div>
-		<c:if test="${In == null}">
-			<p>
-				댓글을 작성하려면 로그인 해주세요. <a
-					href="${pageContext.request.contextPath}/user/userIn">Login
-					바로가기</a>
-			</p>
-		</c:if>
-		<c:if test="${In != null}">
-			<section class="replyForm">
-				<form method="post"
-					action="${pageContext.request.contextPath}/reply/detail">
-					<div class="input_area">
-						<input type="hidden" value="${reply.regDate}" /> <input
-							type="hidden" value="${reply.replyNo}" /> <input type="hidden"
-							name="userId" value="${In}"> <input type="hidden"
-							name="rowNum" value="${detail.rowNum}" />
-						<textarea name="content" id="content" placeholder="내용을 입력하세요."></textarea>
-					</div>
-					<div class="input_area">
-						<button type="submit" id="reply_btn">등록</button>
-					</div>
-				</form>
-			</section>
-		</c:if>
-		<div class="getList"></div>
-	</div>
 
-</body>
+
+
+    <div id="reply">
+      <c:if test="${In == null}">
+        <p>로그인해주세요</p>
+      </c:if>
+      <c:if test="${In != null}">
+      <section class="replyForm">
+          <form method="post" action="${pageContext.request.contextPath}/reply/detail">
+            <div class="input_area">
+              <input type="hidden"  value="${reply.regDate}" />
+              <input type="hidden" value="${reply.replyNo}" />
+              <input type="hidden" name="userId" value="${In}" >
+              <input type="hidden" name="movieId" value="${detail.movieId}" />
+              <textarea name="content" id="content"></textarea>
+            </div>
+            <div class="input_area">
+              <button type="submit" id="reply_btn">리뷰 남기기</button>
+            </div>
+          </form>
+        </section>
+      </c:if>
+      <div class="getList">
+
+    </div>
+    </div>
 <%@ include file="../include/footer.jsp"%>
-<script>
 
-
-window.onload = function() {
-    
-    // 함수 선언
-    function fetchComments(rowNum) {
-    fetch('${pageContext.request.contextPath}/reply/' + ${detail.rowNum})
-        .then(res => res.json())
-        .then(data => {
-            const getList = document.querySelector('.getList');
-            data.forEach(reply => {
-              console.log(reply);
-              const date = new Date(reply.regDate);
-              const formattedDate = new Intl.DateTimeFormat('ko-KR', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-              }).format(date);
-              
-              console.log(reply.content);
-              const commentDiv = document.createElement('div');
-              commentDiv.className = 'comment';
-              commentDiv.innerHTML = `
-              <div class="replydiv">
-              <div>
-              	<span class="rname">\${reply.userName}</span><span> (\${reply.userId})</span>
-              </div>
-              <div>\${reply.content}</div>
-              <div class="rdate">\${formattedDate}</div>
-              </div>
-
-              `;
-              
-              getList.appendChild(commentDiv);
-              //console.log(getList);
-            });
-            console.log(getList);
-        })
-        .catch(error => {
-            console.log('댓글을 불러오는 중 에러 발생: ', error);
-        });
-};
-    // 페이지 로드 시 실행
-        // 댓글 가져오기
-        fetchComments(${detail.rowNum});
-    };
-
-					// 코드에 필요한 요소들 변수에 할당
-					const textWrapper = document.querySelector('.text-wrapper');
-					const text = document.querySelector('.text');
-					const moreText = document.querySelector('.more-text');
-					const lessText = document.querySelector('.less-text');
-
-					// 더보기 텍스트 클릭시 이벤트
-					moreText.addEventListener('click', () => {
-						moreText.style.display = 'none';
-						lessText.style.display = 'inline-block';
-						text.style.display = 'inline-block';
-					});
-
-					// 줄이기 텍스트 클릭시 이벤트
-					lessText.addEventListener('click', () => {
-						lessText.style.display = 'none';
-						moreText.style.display = 'inline-block';
-						text.style.display = '-webkit-box';
-					});
-
-
-
-					/* 스틸컷 */
-					var slides = document.querySelector('.slides'),
-						slide = document.querySelectorAll('.slides li'),
-						currentIdx = 0,
-						slideCount = slide.length,
-						slideWidth = 300,
-						slideMargin = 30,
-						prevBtn = document.querySelector('.prev'),
-						nextBtn = document.querySelector('.next');
-
-					slides.style.width =
-						(slideWidth + slideMargin) * slideCount - slideMargin + 'px';
-
-					function moveSlide(num) {
-						slides.style.left = -num * 330 + 'px';
-						currentIdx = num;
-					}
-
-					nextBtn.addEventListener('click', function () {
-						if (currentIdx < slideCount - 3) {
-							moveSlide(currentIdx + 1);
-						} else {
-							moveSlide(0);
-						}
-					});
-
-					prevBtn.addEventListener('click', function () {
-						if (currentIdx > 0) {
-							moveSlide(currentIdx - 1);
-						} else {
-							moveSlide(slideCount - 3);
-						}
-					});
+  <script>
   
+  window.onload = function() {
+  // 함수 선언
+  function fetchComments(movieId) {
+    fetch('${pageContext.request.contextPath}/reply/' + movieId)
+      .then(res => res.json())
+      .then(data => {
+        const getList = document.querySelector('.getList');
+        data.forEach(reply => {
+          const date = new Date(reply.regDate);
+          const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          }).format(date);
+          
+          const commentDiv = document.createElement('div');
+          commentDiv.className = 'comment';
+          commentDiv.innerHTML = `
+            <p>\${reply.replyNo}</p>
+            <p>\${reply.userId}</p>
+            <p>\${reply.userName}</p>
+            <p>\${formattedDate}</p>
+            <p>\${reply.content}</p>
+          `;
+          
+          const deleteButton = createDeleteButton(reply.replyNo); // reply.replyNo는 댓글의 고유 ID라고 가정합니다.
+          commentDiv.appendChild(deleteButton);
 
-            </script>
+          getList.appendChild(commentDiv);
+        });
+        console.log(getList);
+      })
+      .catch(error => {
+        console.log('댓글을 불러오는 중 에러 발생: ', error);
+      });
+  }
+
+  function createDeleteButton(replyNo) {
+  const deleteButton = document.createElement('button');
+  deleteButton.innerText = '삭제';
+
+  deleteButton.addEventListener('click', () => {
+    console.log(`${pageContext.request.contextPath}/reply/${detail.movieId}/\${replyNo}`);
+    fetch(`${pageContext.request.contextPath}/reply/${detail.movieId}/\${replyNo}`, {
+      method: 'DELETE'
+    })
+    .then(response => response.text())
+    .then(data => {
+        const commentDiv = deleteButton.parentElement;
+        commentDiv.remove();
+    })
+  });
+
+  return deleteButton;
+}
 
 
+  // 페이지 로드 시 실행
+  fetchComments("${detail.movieId}");
+};
 
+    // 코드에 필요한 요소들 변수에 할당
+    const textWrapper = document.querySelector('.text-wrapper');
+    const text = document.querySelector('.text');
+    const moreText = document.querySelector('.more-text');
+    const lessText = document.querySelector('.less-text');
 
+    // 더보기 텍스트 클릭시 이벤트
+    moreText.addEventListener('click', () => {
+      moreText.style.display = 'none';
+      lessText.style.display = 'inline-block';
+      text.style.display = 'inline-block';
+    });
 
+    // 줄이기 텍스트 클릭시 이벤트
+    lessText.addEventListener('click', () => {
+      lessText.style.display = 'none';
+      moreText.style.display = 'inline-block';
+      text.style.display = '-webkit-box';
+    });
 
+    const sliderWrap = document.querySelector('.slider__wrap');
+    const sliderImg = document.querySelector('.slider__img'); // 보여지는 영역
+    const sliderInner = document.querySelector('.slider__inner'); // 움직이는 영역
+    const slider = document.querySelectorAll('.slider'); // 각각의 이미지
+
+    let currentIndex = 0; // 현재 보이는 이미지
+    let sliderCount = slider.length; // 이미지 갯수
+    let sliderWidth = sliderImg.offsetWidth; // 이미지 가로값
+    let sliderClone = sliderInner.firstElementChild.cloneNode(true); // 첫번째 이미지 복사
+    sliderInner.appendChild(sliderClone); // 첫번째 이미지를 마지막에 넣어줌
+
+    function sliderEffect() {
+      currentIndex++;
+      sliderInner.style.transition = 'all 0.6s';
+
+      sliderInner.style.transform =
+        'translateX(-' + sliderWidth * currentIndex + 'px)';
+
+      // 마지막 사진에 위치했을 때
+      if (currentIndex == sliderCount) {
+        setTimeout(() => {
+          sliderInner.style.transition = '0s';
+          sliderInner.style.transform = 'translateX(0px)';
+        }, 700);
+
+        currentIndex = 0;
+      }
+    }
+    setInterval(sliderEffect, 2000);
+  </script>
+  </body>
 </html>
+

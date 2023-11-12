@@ -1,17 +1,23 @@
-package com.spring.timecinema.movie.dto;
+package com.spring.timecinema.movie.entity;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter @Setter 
-@ToString @Builder
-public class DetailResponseDto {
+@Getter @Setter @ToString
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ApiResultTotal {
 
-	private int rowNum;
+	private String movieId;
 	private String title;
 	private String openDt;
 	private String poster;

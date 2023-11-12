@@ -6,6 +6,10 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+<<<<<<< HEAD
+=======
+import org.springframework.web.bind.annotation.DeleteMapping;
+>>>>>>> 6c995e625d287d7f89b90edd1f4714102b39054f
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +35,7 @@ public class ReplyController {
     public String registReply(Reply reply, HttpSession session, Model model) {
         System.out.println(reply.toString());
         model.addAttribute("reply", reply);
+<<<<<<< HEAD
         int rowNum = reply.getRowNum();
         service.registReply(reply);
         return "redirect:/movie/detail/" + rowNum;
@@ -45,4 +50,34 @@ public class ReplyController {
         return service.getList(rowNum);
     }
     
+=======
+        String movieId = reply.getMovieId();
+        service.registReply(reply);
+        return "redirect:/movie/detail/" + movieId;
+    }
+    
+     //댓글 리스트
+    @GetMapping("/{movieId}")
+    @ResponseBody
+    public List<Reply> getList(@PathVariable String movieId ,Model model) {
+        log.info("요청 들어옴 movieId: {}", movieId);
+        log.info("요청 들어옴 getList: {}", service.getList(movieId));
+        return service.getList(movieId);
+    }
+    
+    //댓글 삭제
+    @DeleteMapping("/{movieId}/{replyNo}")
+    public String delete(@PathVariable String movieId, @PathVariable int replyNo) {
+        log.info("movieId: {} replyNo: {}", movieId + "", replyNo + "" );
+        service.delete(movieId, replyNo);
+        
+        if(service.isExist(movieId, replyNo)) return "ok";
+        
+        return "fail";
+        
+    }
+
+
+    
+>>>>>>> 6c995e625d287d7f89b90edd1f4714102b39054f
 }

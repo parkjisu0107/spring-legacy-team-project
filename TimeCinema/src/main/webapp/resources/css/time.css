@@ -1,7 +1,7 @@
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
+*{
+padding: 0;
+margin: 0;
+box-sizing: border-box;
 }
 body {
   height: 100%;
@@ -12,16 +12,22 @@ body {
   align-items: center;
 }
 .title-box {
-  border: 1px solid #fff;
   color: #fff;
-  height: 10rem;
+  height: 8rem;
 }
 h2 {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 4rem;
 }
+h3 {
+    margin-top: 3rem;
+  font-family: 'Bebas Neue', sans-serif;
+  color: #fff;
+  font-size: 3rem;
+}
 #title-sub {
   font-family: 'Nunito', sans-serif;
+  font-size: 1.2rem
 }
 .swiper {
   width: 80%;

@@ -21,18 +21,10 @@
 		별칭을 대신 사용할 수 있게 하는 설정 -->
 
 	<typeAliases>
-<<<<<<< HEAD
-		<typeAlias type="com.spring.timecinema.movie.entity.Era" alias="time"/>
-		<typeAlias type="com.spring.timecinema.movie.entity.Movie" alias="box"/>
-		<typeAlias type="com.spring.timecinema.user.entity.User" alias="user"/>
-		<typeAlias type="com.spring.timecinema.reply.entity.Reply" alias="reply"/>
-		
-=======
 		<typeAlias type="com.spring.timecinema.movie.entity.Time" alias="time"/>
 		<typeAlias type="com.spring.timecinema.movie.entity.Movie" alias="movie"/>
-		<typeAlias type="com.spring.timecinema.movie.entity.Movie" alias="user"/>
+		<typeAlias type="com.spring.timecinema.user.entity.User" alias="user"/>
 		<typeAlias type="com.spring.timecinema.reply.entity.Reply" alias="reply"/>
->>>>>>> 6c995e625d287d7f89b90edd1f4714102b39054f
 	</typeAliases>
 
 

@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-pageEncoding="UTF-8"%>
+pageEncoding="UTF-8"%> <%@ include file="../include/header.jsp" %>
 
 <html>
   <head>
@@ -20,7 +20,6 @@ pageEncoding="UTF-8"%>
     <title></title>
   </head>
   <body>
-    <%@ include file="../include/header.jsp" %>
     <div class="login-wrapper">
       <h2>Login</h2>
       <form method="post" name="loginForm" class="login-form">

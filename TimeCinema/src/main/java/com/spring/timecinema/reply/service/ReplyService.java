@@ -21,12 +21,6 @@ public class ReplyService implements IReplyService {
     }
     
     @Override
-<<<<<<< HEAD
-    public List<Reply> getList(int rowNum) {
-        return mapper.getList(rowNum);
-    }
-
-=======
     public List<Reply> getList(String movieId) {
         return mapper.getList(movieId);
     }
@@ -42,5 +36,4 @@ public class ReplyService implements IReplyService {
     }
 
 
->>>>>>> 6c995e625d287d7f89b90edd1f4714102b39054f
 }

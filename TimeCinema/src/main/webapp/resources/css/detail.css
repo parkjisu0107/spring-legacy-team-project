@@ -83,6 +83,10 @@ main {
 	border-radius: 5px;
 }
 
+.detail_tit {
+	margin-top: 15px;
+}
+
 .detail_cont {
 	display: flex;
 	padding: 20px 0 48px;
@@ -112,6 +116,16 @@ main {
 	color: #fff;
 	word-break: break-all;
 	word-wrap: break-word;
+}
+
+.sp {
+	padding-right: 20px;
+	max-width: 100px;
+	padding-right: 20px;
+	font-weight: normal;
+	color: #98989C;
+	white-space: nowrap;
+	
 }
 
 /* 틀 */
@@ -221,16 +235,31 @@ li {
 }
 
 #reply_btn{
-	width: 50px;
-	height: 50px;
-	margin-bottom: 5px;
+	width: 65px;
+	height: 65px;
+	margin: 85px 0 15px 30px;
+	background-color: pink;
+	border-radius: 5px;
+	font-weight: bolder;
+	color: #fff;
 }
+
+
 
 .replydiv {
 	background-color: grey;
 	border-radius: 15px;
-	margin-bottom: 20px;
 	padding: 10px 0 10px 15px;
+	disply: flex;
+	}
+.comment button{
+	width: 35px;
+	height: 35px;
+	border-radius: 5px;
+	color: #fff;
+	background-color: black;
+	
+
 }
 
 .replydiv .rname {
@@ -244,13 +273,20 @@ li {
 }
 
 #content {
-	width: 100%;
+	width: 900px;
 	height: 150px;
 	padding: 30px 15px 0 15px;
-	margin-bottom: 5px;
-	margin-top: 5px;
+	margin: 5px 0 5px 10px; 
+	resize: none;
+	border-radius: 5px;
 }
 
 .comment {
 	margin-top: 5px;
+	width: 900px;
+}
+
+.replyForm form{
+	display: flex;
+	margin-bottom: 25px;
 }

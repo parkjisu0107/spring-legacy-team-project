@@ -2,15 +2,17 @@ body {
     background-color: #000;
 }
 
-.head {
-    height: 100px;
-    border: 1px solid rebeccapurple;
-}
 
 .keyword {
     color: #fff;
-    margin: 100px 200px 0 0;
+    margin: 100px 200px 0 200px;
     background-color: gray;
+    border-radius: 5px;
+    font-weight:bolder;
+    font-size: 15px;
+    height: 50px;
+    text-align: center;
+    padding-top: 15px;
 }
 
 .search {
@@ -51,12 +53,10 @@ body {
 
 .detail_tit {
     color: #fff;
-    padding-top: 15px;
 }
 
 .inner_cont {
     overflow: hidden;
-    padding-top: 25px;
 }
 
 .list_cont {

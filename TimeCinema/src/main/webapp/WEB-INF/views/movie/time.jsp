@@ -42,6 +42,7 @@ pageEncoding="UTF-8"%>
     </div>
 
     <!-- Swiper Box Office List -->
+    <h3>Box Office List</h3>
     <div class="swiper mySwiper">
       <div class="swiper-button swiper-button-next"></div>
       <div class="swiper-button swiper-button-prev"></div>
@@ -59,6 +60,7 @@ pageEncoding="UTF-8"%>
     </div>
 
     <!-- Swiper Populariy List -->
+    <h3>Popularity List</h3>
     <div class="swiper mySwiper">
       <div class="swiper-button swiper-button-next"></div>
       <div class="swiper-button swiper-button-prev"></div>
